@@ -4,10 +4,8 @@ import 'package:retry/retry.dart';
 import '../../../../../core/network/network_url.dart';
 import '../../../domain/models/security_contacts_model.dart';
 import '../../entities/security_contacts.dart';
+import 'main_menu_datasource_abst.dart';
 
-abstract class MainMenuRemoteDatasource {
-  Future<List<SecurityContacts>> getListSecurityContacts(int userId);
-}
 
 class MainMenuRemoteDatasourceImpl implements MainMenuRemoteDatasource {
 
