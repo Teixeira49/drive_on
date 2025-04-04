@@ -35,9 +35,6 @@ class MyApp extends StatelessWidget {
             //onUnknownRoute: (RouteSettings setting) {
             //  return getNotFoundRoute();
             //},
-            supportedLocales: const [
-              Locale('es', 'ES'),
-            ],
             home: const MyHomePage(title: 'Flutter Demo Home Page'),
           );
         })
