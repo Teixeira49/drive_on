@@ -71,191 +71,233 @@ class MyLoginPageState extends State<LoginPage> {
         child: BlocConsumer<LoginCubit, LoginState>(
           listener: (contextCubit, stateCubit) {},
           builder: (contextCubit, stateCubit) {
-            return Scaffold(
-                body: Container(
-                    decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                            colors: [
-                          Colors.white,
-                          Colors.grey[50]!,
-                          Colors.grey[50]!,
-                          Colors.grey[50]!,
-                          Colors.cyan,
-                          Colors.blue
-                        ])),
-                    child: SafeArea(
-                        minimum: const EdgeInsets.all(AppSpacing.lg),
-                        child: Center(
-                            child: SingleChildScrollView(
+            return Container(
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                      Colors.white,
+                      Colors.grey[50]!,
+                      Colors.grey[50]!,
+                      Colors.cyan,
+                      Colors.blue
+                    ])),
+                child: Scaffold(
+                    backgroundColor: Colors.transparent,
+                    body: Center(
+                        child: SingleChildScrollView(
+                            child: SafeArea(
+                                minimum: const EdgeInsets.all(AppSpacing.lg),
                                 child: Form(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    const Icon(
-                                      Icons.add_box,
-                                      size: 32,
-                                    ),
-                                    const SizedBox(
-                                      width: 16,
-                                    ),
-                                    Flexible(
-                                      child: GradientText(
-                                        'Secure Contact',
-                                        gradientDirection:
-                                            GradientDirection.ttb,
-                                        style: const TextStyle(
-                                          fontSize: 40.0,
-                                        ),
-                                        colors: [
-                                          Colors.blue,
-                                          Colors.cyanAccent,
-                                          //Colors.tealAccent,
-                                        ],
-                                      ),
-                                    )
-                                  ]),
-                              SizedBox(
-                                height: 32,
-                              ),
-                              Card(
-                                elevation: 10,
-                                margin: EdgeInsets.all(24),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                surfaceTintColor: Colors.white,
-                                child: Padding(
-                                  padding: EdgeInsets.all(24),
                                   child: Column(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
+                                    mainAxisSize: MainAxisSize.max,
+                                    mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      Text('Iniciar Sesion', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.blue),),
-                                      Padding(
-                                        padding:
-                                            EdgeInsets.only(top: 24, bottom: 12),
-                                        child: TextFormField(
-                                          decoration: InputDecoration(
-                                              labelText: "Email"),
-                                        ),
-                                      ),
-                                  Padding(
-                                    padding:
-                                    EdgeInsets.symmetric(vertical: 12),
-                                    child: TextFormField(
-                                        decoration: InputDecoration(
-                                            suffixIcon: IconButton(
-                                              icon: isObscured
-                                                  ? const Icon(
-                                                      Icons.visibility_off)
-                                                  : const Icon(
-                                                      Icons.visibility),
-                                              color: Theme.of(context)
-                                                  .iconTheme
-                                                  .color,
-                                              onPressed: () {
-                                                setState(() {
-                                                  isObscured = !isObscured;
-                                                });
-                                              },
+                                      Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            const Icon(
+                                              Icons.add_box,
+                                              size: 32,
                                             ),
-                                            labelText: "Contraseña"),
-                                      ),),
-                                      Padding(
-                                          padding: EdgeInsets.symmetric(vertical: 12),
-                                        child:
-                                      Container(
-                                        width: double.maxFinite,
-                                        decoration: BoxDecoration(
-                                          gradient: const LinearGradient(
-                                            colors: [
-                                              Colors.blue,
-                                              Colors.lightBlueAccent
-                                            ],
-                                            begin: Alignment.topLeft,
-                                            end: Alignment.bottomRight,
-                                          ),
-                                          borderRadius: BorderRadius.circular(
-                                              30.0), // Uniform radius
-                                        ),
-                                        child: ElevatedButton(
-                                            style: ElevatedButton.styleFrom(
-                                                elevation: 5,
-                                                backgroundColor:
-                                                    Colors.transparent,
-                                                shadowColor: Colors.transparent,
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(30),
+                                            const SizedBox(
+                                              width: 16,
+                                            ),
+                                            Flexible(
+                                              child: GradientText(
+                                                'Secure Contact',
+                                                gradientDirection:
+                                                    GradientDirection.ttb,
+                                                style: const TextStyle(
+                                                  fontSize: 40.0,
                                                 ),
-                                                alignment: Alignment.center,
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 24,
-                                                        vertical: 8)),
-                                            onPressed: () {},
-                                            child: const Text(
-                                              'Continue',
-                                              style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 20,
-                                                fontWeight: FontWeight.bold,
+                                                colors: [
+                                                  Colors.blue,
+                                                  Colors.cyanAccent,
+                                                  //Colors.tealAccent,
+                                                ],
                                               ),
-                                            )),
-                                      ),),
-                                      TextButton(
-                                        onPressed: () {},
-                                        child: Text("Forgot Password",
-                                            style:
-                                                TextStyle(color: Colors.blue)),
+                                            )
+                                          ]),
+                                      SizedBox(
+                                        height: 32,
                                       ),
-                                      RichText(
-                                          text: TextSpan(
-                                              text: "¿No tienes una cuenta? ",
-                                              style: TextStyle(
-                                                  color: Colors.black54),
-                                              children: [
-                                            TextSpan(
-                                                text: 'Registrate',
+                                      Card(
+                                        elevation: 10,
+                                        margin: EdgeInsets.all(24),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(12),
+                                        ),
+                                        surfaceTintColor: Colors.white,
+                                        child: Padding(
+                                          padding: EdgeInsets.all(24),
+                                          child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Text(
+                                                'Iniciar Sesion',
                                                 style: TextStyle(
+                                                    fontSize: 20,
+                                                    fontWeight: FontWeight.bold,
                                                     color: Colors.blue),
-                                                recognizer:
-                                                    TapGestureRecognizer()
-                                                      ..onTap = () {
-                                                        print('registrar');
-                                                      })
-                                          ]))
+                                              ),
+                                              Padding(
+                                                padding: EdgeInsets.only(
+                                                    top: 24, bottom: 12),
+                                                child: TextFormField(
+                                                  decoration: InputDecoration(
+                                                      labelText: "Email"),
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding: EdgeInsets.symmetric(
+                                                    vertical: 12),
+                                                child: TextFormField(
+                                                  decoration: InputDecoration(
+                                                      suffixIcon: IconButton(
+                                                        icon: isObscured
+                                                            ? const Icon(Icons
+                                                                .visibility_off)
+                                                            : const Icon(Icons
+                                                                .visibility),
+                                                        color: Theme.of(context)
+                                                            .iconTheme
+                                                            .color,
+                                                        onPressed: () {
+                                                          setState(() {
+                                                            isObscured =
+                                                                !isObscured;
+                                                          });
+                                                        },
+                                                      ),
+                                                      labelText: "Contraseña"),
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding: EdgeInsets.symmetric(
+                                                    vertical: 12),
+                                                child: Container(
+                                                  width: double.maxFinite,
+                                                  decoration: BoxDecoration(
+                                                    gradient:
+                                                        const LinearGradient(
+                                                      colors: [
+                                                        Colors.blue,
+                                                        Colors.cyanAccent
+                                                      ],
+                                                      begin: Alignment.topLeft,
+                                                      end:
+                                                          Alignment.bottomRight,
+                                                    ),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            30.0), // Uniform radius
+                                                  ),
+                                                  child: ElevatedButton(
+                                                      style: ElevatedButton
+                                                          .styleFrom(
+                                                              elevation: 5,
+                                                              backgroundColor: Colors
+                                                                  .transparent,
+                                                              shadowColor: Colors
+                                                                  .transparent,
+                                                              shape:
+                                                                  RoundedRectangleBorder(
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            30),
+                                                              ),
+                                                              alignment:
+                                                                  Alignment
+                                                                      .center,
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                      .symmetric(
+                                                                      horizontal:
+                                                                          24,
+                                                                      vertical:
+                                                                          8)),
+                                                      onPressed: () {
+                                                        Navigator.of(context)
+                                                            .pushNamed( //Replacement
+                                                                '/main/contacts-wallet');
+                                                      },
+                                                      child: const Text(
+                                                        'Continuar',
+                                                        style: TextStyle(
+                                                          color: Colors.white,
+                                                          fontSize: 20,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                        ),
+                                                      )),
+                                                ),
+                                              ),
+                                          Container(
+                                            margin: EdgeInsets.only(
+                                                bottom: 6, top: 2),
+                                            child: TextButton(
+                                                onPressed: () {},
+                                                child: Text(
+                                                    "¿Olvidaste tu contraseña?",
+                                                    style: TextStyle(
+                                                      fontSize: 16,
+                                                        color: Colors.blue)),
+                                              )),
+                                              RichText(
+                                                  text: TextSpan(
+                                                      text:
+                                                          "¿No tienes una cuenta? ",
+                                                      style: TextStyle(
+                                                        fontSize: 16,
+                                                          color:
+                                                              Colors.black54),
+                                                      children: [
+                                                    TextSpan(
+                                                        text: 'Registrate',
+                                                        style: TextStyle(
+                                                            fontSize: 16,
+                                                            color: Colors.blue),
+                                                        recognizer:
+                                                            TapGestureRecognizer()
+                                                              ..onTap = () {
+                                                                print(
+                                                                    'registrar');
+                                                              })
+                                                  ]))
+                                            ],
+                                          ),
+                                        ),
+                                      ),
                                     ],
                                   ),
-                                ),
-                              ),
-                              SizedBox(
-                                height: 32,
-                              ),
-                            ],
+                                )))),
+                    bottomNavigationBar: Container(
+                      margin: EdgeInsets.only(bottom: 12),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(
+                            Icons.copyright,
+                            size: 14,
+                            color: Colors.white,
                           ),
-                        ))))),
-                bottomNavigationBar: Container(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(
-                        Icons.copyright,
-                        size: 14,
+                          const SizedBox(
+                            width: 6,
+                          ),
+                          Text(
+                            "Secure Contact: ${_version != 'Cargando...' ? _version : emptyString}. Flembee Inc.",
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ],
                       ),
-                      const SizedBox(
-                        width: 6,
-                      ),
-                      Text(
-                          "Version: ${_version != 'Cargando...' ? _version : emptyString}. Flembee Inc."),
-                    ],
-                  ),
-                ));
+                    )));
           },
         ));
   }
