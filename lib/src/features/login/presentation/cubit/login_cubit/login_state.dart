@@ -1,13 +1,25 @@
+import '../../../../../shared/data/entities/user.dart';
+
 abstract class LoginState {}
 
 class LoginStateInitial extends LoginState {}
 
 class LoginStateLoading extends LoginState {}
 
-class LoginStateLoaded extends LoginState {}
+class LoginStateLoginSuccess extends LoginState {
+  final User user;
 
-class LoginStateLoadedButNotLog extends LoginState {}
+  LoginStateLoginSuccess({required this.user});
+}
 
-class LoginStateLoadedButEmpty extends LoginState {}
+class LoginStateLoginFailed extends LoginState {
+  final String sms;
 
-class LoginStateError extends LoginState {}
+  LoginStateLoginFailed({required this.sms});
+}
+
+class LoginStateError extends LoginState {
+  final String sms;
+
+  LoginStateError({required this.sms});
+}

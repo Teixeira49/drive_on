@@ -1,7 +1,9 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'package:drive_on/src/core/network/error/exceptions.dart';
 import 'package:drive_on/src/core/network/network_url.dart';
-import 'package:drive_on/src/features/login/data/entities/user.dart';
+import 'package:drive_on/src/shared/data/entities/user.dart';
 import 'package:drive_on/src/features/login/domain/models/login_user_model.dart';
 
 import 'package:drive_on/src/features/login/domain/models/login_user_params.dart';
@@ -26,19 +28,38 @@ class LoginDatasourceImpl extends LoginDatasource {
     const r = RetryOptions(maxAttempts: 3); // implement
 
     try {
-      final data = await dio.post('$apiUrl/auth/login',
+      final response = await dio.post('$apiUrl/auth/login',
         options: Options(
           sendTimeout: const Duration(seconds: 10),
           receiveTimeout: const Duration(seconds: 10),
         ),
-        data: params.toJson()
+        data: jsonEncode(params)
       );
-      return UserModel.fromJson(data);
-    } on DioException catch (e) {
-      if (e.type == DioErrorType.cancel) {
-        throw CacheException(handleDioError(e));
+      return UserModel.fromJson(response.data);
+    } on DioException catch (e) { // Simplify
+      if (e.response != null) {
+        if (e.response!.data != null) {
+          if (e.response!.data['message'] != null) {
+            throw ServerException(e.response!.data['message']);
+          } else {
+            throw ServerException(handleDioError(e));
+          }
+        } else {
+          switch (e.response!.statusCode) {
+            case 401:
+              throw ServerException('Usuario invalido');
+            case 403:
+              throw ServerException('Cuenta no autorizada');
+            default:
+              throw ServerException(handleDioError(e));
+          }
+        }
       } else {
-        throw ServerException(handleDioError(e));
+        if (e.type == DioExceptionType.cancel) {
+          throw CacheException(handleDioError(e));
+        } else {
+          throw ServerException(handleDioError(e));
+        }
       }
     } on ServerException {
       rethrow;

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../cubit/contacts_cubit/contacts_cubit.dart';
+import '../cubit/contacts_cubit/contacts_state.dart';
 
 class MainMenuPage extends StatefulWidget {
   const MainMenuPage({super.key});
@@ -28,18 +30,24 @@ class MainMenuState extends State<MainMenuPage> {
     // TODO: implement build
     return MultiBlocProvider(
       providers: [
-
+        BlocProvider(
+            create: (_) => ContactsCubit(ContactsStateInitial()),
+        )
       ],
       child: Scaffold(
-        appBar: AppBar(),
+        appBar: AppBar(
+          title: Text('pepe'),
+          automaticallyImplyLeading: true,
+        ),
         body: Column(
           children: [
             Text('Data'),
             Text("test")
           ],
         ),
+        //bottomNavigationBar: Bot,
       ),
     );
   }
-
+//context.read<UserCubit>().getUser();
 }

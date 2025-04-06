@@ -5,7 +5,7 @@ import '../../../../core/network/error/failures.dart';
 import '../../domain/models/login_user_params.dart';
 import '../../domain/repository/login_repository_abstract.dart';
 import '../datasource/remote/login_datasource_impl.dart';
-import '../entities/user.dart';
+import '../../../../shared/data/entities/user.dart';
 
 class LoginRepositoryImpl extends LoginRepository {
   final LoginDatasourceImpl loginDatasourceImpl;
