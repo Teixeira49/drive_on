@@ -1,23 +1,24 @@
 import 'package:drive_on/src/features/login/domain/repository/login_repository_abstract.dart';
 import 'package:drive_on/src/features/login/domain/use_cases/login_account_usecase.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/painting.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:simple_gradient_text/simple_gradient_text.dart';
 
 import '../../../../core/config/styles/margin.dart';
+import '../../../../core/config/styles/static_colors.dart';
 import '../../../../core/utils/constants/app_constants.dart';
+import '../widgets/create_account_button.dart';
 import '../../../../shared/presentation/widgets/floating_snack_bars.dart';
+import '../widgets/forgot_password_button.dart';
 import '../../../../shared/presentation/widgets/loading_dialog.dart';
 import '../../data/datasource/remote/login_datasource_impl.dart';
 import '../../data/repository/login_repository_impl.dart';
 import '../cubit/login_cubit/login_cubit.dart';
 import '../cubit/login_cubit/login_state.dart';
+import '../widgets/email_field.dart';
+import '../widgets/gradient_button.dart';
+import '../widgets/password_field.dart';
+import '../widgets/title_header.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -70,12 +71,18 @@ class MyLoginPageState extends State<LoginPage> {
             } else if (stateCubit is LoginStateLoginSuccess) {
               print('logrado');
               Navigator.pop(contextCubit);
+              //Navigator.of(context)
+              //    .pushNamed(
+              //        //Replacement
+              //        '/main/contacts-wallet');
             } else if (stateCubit is LoginStateLoginFailed) {
               print('fallido');
               Navigator.pop(contextCubit);
               FloatingWarningSnackBar.show(contextCubit, stateCubit.sms);
             } else {
               print('object');
+              Navigator.pop(contextCubit);
+              FloatingWarningSnackBar.show(contextCubit, 'Error Desconocido');
             }
           },
           builder: (contextCubit, stateCubit) {
@@ -85,13 +92,7 @@ class MyLoginPageState extends State<LoginPage> {
                     gradient: LinearGradient(
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
-                        colors: [
-                      Colors.white,
-                      Colors.grey[50]!,
-                      Colors.grey[50]!,
-                      Colors.cyan,
-                      Colors.blue
-                    ])),
+                        colors: ColorPalette.authGradient)),
                 child: Scaffold(
                     backgroundColor: Colors.transparent,
                     body: Center(
@@ -99,197 +100,53 @@ class MyLoginPageState extends State<LoginPage> {
                             child: SafeArea(
                                 minimum: const EdgeInsets.all(AppSpacing.lg),
                                 child: Form(
+                                  key: _formKey,
                                   child: Column(
                                     mainAxisSize: MainAxisSize.max,
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            const Icon(
-                                              Icons.add_box,
-                                              size: 32,
-                                            ),
-                                            const SizedBox(
-                                              width: 16,
-                                            ),
-                                            Flexible(
-                                              child: GradientText(
-                                                'Secure Contact',
-                                                gradientDirection:
-                                                    GradientDirection.ttb,
-                                                style: const TextStyle(
-                                                  fontSize: 40.0,
-                                                ),
-                                                colors: [
-                                                  Colors.blue,
-                                                  Colors.cyanAccent,
-                                                  //Colors.tealAccent,
-                                                ],
-                                              ),
-                                            )
-                                          ]),
-                                      SizedBox(
+                                      const TitleHeader(),
+                                      const SizedBox(
                                         height: 32,
                                       ),
                                       Card(
-                                        elevation: 10,
-                                        margin: EdgeInsets.all(24),
+                                        elevation: ColorPalette.elevationScaleM,
+                                        margin:
+                                            const EdgeInsets.all(AppSpacing.lg),
                                         shape: RoundedRectangleBorder(
                                           borderRadius:
                                               BorderRadius.circular(12),
                                         ),
                                         surfaceTintColor: Colors.white,
                                         child: Padding(
-                                          padding: EdgeInsets.all(24),
+                                          padding: const EdgeInsets.all(
+                                              AppSpacing.lg),
                                           child: Column(
                                             mainAxisAlignment:
                                                 MainAxisAlignment.spaceBetween,
                                             children: [
-                                              Text(
+                                              const Text(
                                                 'Iniciar Sesion',
                                                 style: TextStyle(
                                                     fontSize: 20,
                                                     fontWeight: FontWeight.bold,
                                                     color: Colors.blue),
                                               ),
-                                              Padding(
-                                                padding: EdgeInsets.only(
-                                                    top: 24, bottom: 12),
-                                                child: TextFormField(
-                                                  controller: _emailController,
-                                                  decoration: InputDecoration(
-                                                      labelText: "Email"),
-                                                ),
+                                              EmailField(
+                                                  controller: _emailController),
+                                              PasswordField(controller: _passwordController,),
+                                              GradientButton(
+                                                function: () {
+                                                  contextCubit
+                                                      .read<LoginCubit>()
+                                                      .loginAccount(
+                                                          _emailController.text,
+                                                          _passwordController
+                                                              .text);
+                                                },
                                               ),
-                                              Padding(
-                                                padding: EdgeInsets.symmetric(
-                                                    vertical: 12),
-                                                child: TextFormField(
-                                                  controller: _passwordController,
-                                                  decoration: InputDecoration(
-                                                      suffixIcon: IconButton(
-                                                        icon: isObscured
-                                                            ? const Icon(Icons
-                                                                .visibility_off)
-                                                            : const Icon(Icons
-                                                                .visibility),
-                                                        color: Theme.of(context)
-                                                            .iconTheme
-                                                            .color,
-                                                        onPressed: () {
-                                                          setState(() {
-                                                            isObscured =
-                                                                !isObscured;
-                                                          });
-                                                        },
-                                                      ),
-                                                      labelText: "Contraseña"),
-                                                ),
-                                              ),
-                                              Padding(
-                                                padding: EdgeInsets.symmetric(
-                                                    vertical: 12),
-                                                child: Container(
-                                                  width: double.maxFinite,
-                                                  decoration: BoxDecoration(
-                                                    gradient:
-                                                        const LinearGradient(
-                                                      colors: [
-                                                        Colors.blue,
-                                                        Colors.cyanAccent
-                                                      ],
-                                                      begin: Alignment.topLeft,
-                                                      end:
-                                                          Alignment.bottomRight,
-                                                    ),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            30.0), // Uniform radius
-                                                  ),
-                                                  child: ElevatedButton(
-                                                      style: ElevatedButton
-                                                          .styleFrom(
-                                                              elevation: 5,
-                                                              backgroundColor: Colors
-                                                                  .transparent,
-                                                              shadowColor: Colors
-                                                                  .transparent,
-                                                              shape:
-                                                                  RoundedRectangleBorder(
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            30),
-                                                              ),
-                                                              alignment:
-                                                                  Alignment
-                                                                      .center,
-                                                              padding:
-                                                                  const EdgeInsets
-                                                                      .symmetric(
-                                                                      horizontal:
-                                                                          24,
-                                                                      vertical:
-                                                                          8)),
-                                                      onPressed: () {
-                                                        contextCubit
-                                                            .read<LoginCubit>()
-                                                            .loginAccount(
-                                                                _emailController
-                                                                    .text,
-                                                                _passwordController
-                                                                    .text);
-                                                        //Navigator.of(context)
-                                                        //    .pushNamed(
-                                                        //        //Replacement
-                                                        //        '/main/contacts-wallet');
-                                                      },
-                                                      child: const Text(
-                                                        'Continuar',
-                                                        style: TextStyle(
-                                                          color: Colors.white,
-                                                          fontSize: 20,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                        ),
-                                                      )),
-                                                ),
-                                              ),
-                                              Container(
-                                                  margin: EdgeInsets.only(
-                                                      bottom: 6, top: 2),
-                                                  child: TextButton(
-                                                    onPressed: () {},
-                                                    child: Text(
-                                                        "¿Olvidaste tu contraseña?",
-                                                        style: TextStyle(
-                                                            fontSize: 16,
-                                                            color:
-                                                                Colors.blue)),
-                                                  )),
-                                              RichText(
-                                                  text: TextSpan(
-                                                      text:
-                                                          "¿No tienes una cuenta? ",
-                                                      style: TextStyle(
-                                                          fontSize: 16,
-                                                          color:
-                                                              Colors.black54),
-                                                      children: [
-                                                    TextSpan(
-                                                        text: 'Registrate',
-                                                        style: TextStyle(
-                                                            fontSize: 16,
-                                                            color: Colors.blue),
-                                                        recognizer:
-                                                            TapGestureRecognizer()
-                                                              ..onTap = () {
-                                                                print(
-                                                                    'registrar');
-                                                              })
-                                                  ]))
+                                              const ForgotPasswordButton(),
+                                              const CreateAccountButton(),
                                             ],
                                           ),
                                         ),
@@ -298,7 +155,7 @@ class MyLoginPageState extends State<LoginPage> {
                                   ),
                                 )))),
                     bottomNavigationBar: Container(
-                      margin: EdgeInsets.only(bottom: 12),
+                      margin: const EdgeInsets.only(bottom: AppSpacing.sm),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -308,11 +165,11 @@ class MyLoginPageState extends State<LoginPage> {
                             color: Colors.white,
                           ),
                           const SizedBox(
-                            width: 6,
+                            width: AppSpacing.xs,
                           ),
                           Text(
                             "Secure Contact: ${_version != 'Cargando...' ? _version : emptyString}. Flembee Inc.",
-                            style: TextStyle(color: Colors.white),
+                            style: const TextStyle(color: Colors.white),
                           ),
                         ],
                       ),
