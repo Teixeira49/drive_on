@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:drive_on/src/core/network/error/exceptions.dart';
 import 'package:drive_on/src/core/network/network_url.dart';
-import 'package:drive_on/src/features/login/data/entities/user.dart';
+import 'package:drive_on/src/shared/data/entities/user.dart';
 import 'package:drive_on/src/features/login/domain/models/login_user_model.dart';
 
 import 'package:drive_on/src/features/login/domain/models/login_user_params.dart';

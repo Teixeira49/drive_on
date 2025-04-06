@@ -1,7 +1,7 @@
 import 'package:dartz/dartz.dart';
 
 import '../../../../core/network/error/failures.dart';
-import '../../data/entities/user.dart';
+import '../../../../shared/data/entities/user.dart';
 import '../models/login_user_params.dart';
 
 abstract class LoginRepository {

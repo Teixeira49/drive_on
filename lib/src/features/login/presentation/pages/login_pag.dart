@@ -1,5 +1,6 @@
 import 'package:drive_on/src/features/login/domain/repository/login_repository_abstract.dart';
 import 'package:drive_on/src/features/login/domain/use_cases/login_account_usecase.dart';
+import 'package:drive_on/src/shared/presentation/cubit/user_cubit/user_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -69,18 +70,17 @@ class MyLoginPageState extends State<LoginPage> {
             if (stateCubit is LoginStateLoading) {
               LoadingShowDialog.show(contextCubit, 'Iniciando Sesion');
             } else if (stateCubit is LoginStateLoginSuccess) {
-              print('logrado');
               Navigator.pop(contextCubit);
-              //Navigator.of(context)
-              //    .pushNamed(
-              //        //Replacement
-              //        '/main/contacts-wallet');
+              context.read<UserCubit>().updateUser(stateCubit.user);
+              context.read<UserCubit>().getUser();
+              Navigator.of(context)
+                  .pushNamed(
+                      //Replacement
+                      '/main/contacts-wallet');
             } else if (stateCubit is LoginStateLoginFailed) {
-              print('fallido');
               Navigator.pop(contextCubit);
               FloatingWarningSnackBar.show(contextCubit, stateCubit.sms);
             } else {
-              print('object');
               Navigator.pop(contextCubit);
               FloatingWarningSnackBar.show(contextCubit, 'Error Desconocido');
             }
@@ -137,12 +137,16 @@ class MyLoginPageState extends State<LoginPage> {
                                               PasswordField(controller: _passwordController,),
                                               GradientButton(
                                                 function: () {
-                                                  contextCubit
-                                                      .read<LoginCubit>()
-                                                      .loginAccount(
-                                                          _emailController.text,
-                                                          _passwordController
-                                                              .text);
+                                                  if (_emailController.text.isNotEmpty && _passwordController.text.isNotEmpty) {
+                                                    contextCubit
+                                                        .read<LoginCubit>()
+                                                        .loginAccount(
+                                                        _emailController.text,
+                                                        _passwordController
+                                                            .text);
+                                                  } else {
+                                                    _formKey.currentState?.validate();
+                                                  }
                                                 },
                                               ),
                                               const ForgotPasswordButton(),
