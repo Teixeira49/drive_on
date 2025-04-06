@@ -12,6 +12,7 @@ import 'package:simple_gradient_text/simple_gradient_text.dart';
 
 import '../../../../core/config/styles/margin.dart';
 import '../../../../core/utils/constants/app_constants.dart';
+import '../../../../shared/presentation/widgets/floating_snack_bars.dart';
 import '../../../../shared/presentation/widgets/loading_dialog.dart';
 import '../../data/datasource/remote/login_datasource_impl.dart';
 import '../../data/repository/login_repository_impl.dart';
@@ -72,6 +73,7 @@ class MyLoginPageState extends State<LoginPage> {
             } else if (stateCubit is LoginStateLoginFailed) {
               print('fallido');
               Navigator.pop(contextCubit);
+              FloatingWarningSnackBar.show(contextCubit, stateCubit.sms);
             } else {
               print('object');
             }

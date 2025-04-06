@@ -36,11 +36,30 @@ class LoginDatasourceImpl extends LoginDatasource {
         data: jsonEncode(params)
       );
       return UserModel.fromJson(response.data);
-    } on DioException catch (e) {
-      if (e.type == DioErrorType.cancel) {
-        throw CacheException(handleDioError(e));
+    } on DioException catch (e) { // Simplify
+      if (e.response != null) {
+        if (e.response!.data != null) {
+          if (e.response!.data['message'] != null) {
+            throw ServerException(e.response!.data['message']);
+          } else {
+            throw ServerException(handleDioError(e));
+          }
+        } else {
+          switch (e.response!.statusCode) {
+            case 401:
+              throw ServerException('Usuario invalido');
+            case 403:
+              throw ServerException('Cuenta no autorizada');
+            default:
+              throw ServerException(handleDioError(e));
+          }
+        }
       } else {
-        throw ServerException(handleDioError(e));
+        if (e.type == DioExceptionType.cancel) {
+          throw CacheException(handleDioError(e));
+        } else {
+          throw ServerException(handleDioError(e));
+        }
       }
     } on ServerException {
       rethrow;

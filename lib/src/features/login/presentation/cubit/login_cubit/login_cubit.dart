@@ -19,11 +19,11 @@ class LoginCubit extends Cubit<LoginState> {
       final data = await accountUseCase
           .call(UserParams(email: email, password: password));
       data.fold(
-              (l) => emit(LoginStateLoginFailed()),
-              (r) => emit(LoginStateLoginSuccess())
+              (l) => emit(LoginStateLoginFailed(sms: l.message)),
+              (r) => emit(LoginStateLoginSuccess(user: r))
       );
     } catch (e) {
-      emit(LoginStateError());
+      emit(LoginStateError(sms: e.toString()));
     } finally {
       _isFetching = false;
     }
