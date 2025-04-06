@@ -72,7 +72,6 @@ class MyLoginPageState extends State<LoginPage> {
             } else if (stateCubit is LoginStateLoginSuccess) {
               Navigator.pop(contextCubit);
               context.read<UserCubit>().updateUser(stateCubit.user);
-              context.read<UserCubit>().getUser();
               Navigator.of(context)
                   .pushNamed(
                       //Replacement
