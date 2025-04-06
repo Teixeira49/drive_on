@@ -18,9 +18,9 @@ class LoginRepositoryImpl extends LoginRepository {
       final data = await loginDatasourceImpl.loginUser(params);
       return Right(data);
     } on ServerException catch (e) {
-      return Left(ServerFailure(e.message));
+      return Left(ServerFailure(e.message, 'ServerException'));
     } catch (e) {
-      return Left(OtherFailure(e.toString()));
+      return Left(OtherFailure(e.toString(), null));
     }
   }
 }

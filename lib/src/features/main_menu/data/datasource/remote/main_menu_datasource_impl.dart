@@ -3,6 +3,7 @@ import 'package:retry/retry.dart';
 
 import '../../../../../core/network/network_url.dart';
 import '../../../domain/models/security_contacts_model.dart';
+import '../../../domain/models/security_contacts_params.dart';
 import '../../entities/security_contacts.dart';
 import 'main_menu_datasource_abst.dart';
 
@@ -16,14 +17,14 @@ class MainMenuRemoteDatasourceImpl implements MainMenuRemoteDatasource {
   bool get isFetching => _isFetching;
 
   @override
-  Future<List<SecurityContacts>> getListSecurityContacts(int userId) async {
+  Future<List<SecurityContacts>> getListSecurityContacts(SecurityContactsParams params) async {
     if (!_isFetching) {
       _isFetching = true;
     }
 
     const r = RetryOptions(maxAttempts: 3);
 
-    final resp = await r.retry(() => dio.get('$apiUrl/security-contacts/$userId',
+    final resp = await r.retry(() => dio.get('$apiUrl/security-contacts/${params.getUserId()}',
         options: Options(
           sendTimeout: const Duration(seconds: 10),
           receiveTimeout: const Duration(seconds: 10),
