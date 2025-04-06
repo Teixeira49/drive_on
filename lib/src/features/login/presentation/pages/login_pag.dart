@@ -12,6 +12,7 @@ import 'package:simple_gradient_text/simple_gradient_text.dart';
 
 import '../../../../core/config/styles/margin.dart';
 import '../../../../core/utils/constants/app_constants.dart';
+import '../../../../shared/presentation/widgets/loading_dialog.dart';
 import '../../data/datasource/remote/login_datasource_impl.dart';
 import '../../data/repository/login_repository_impl.dart';
 import '../cubit/login_cubit/login_cubit.dart';
@@ -51,13 +52,6 @@ class MyLoginPageState extends State<LoginPage> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
 
-  //@override
-  //void dispose() {
-  //  _emailController.dispose();
-  //  _passwordController.dispose();
-  //  super.dispose();
-  //}
-
   bool isObscured = true;
 
   @override
@@ -69,7 +63,19 @@ class MyLoginPageState extends State<LoginPage> {
     return BlocProvider(
         create: (_) => LoginCubit(loginAccountUseCase),
         child: BlocConsumer<LoginCubit, LoginState>(
-          listener: (contextCubit, stateCubit) {},
+          listener: (contextCubit, stateCubit) {
+            if (stateCubit is LoginStateLoading) {
+              LoadingShowDialog.show(contextCubit, 'Iniciando Sesion');
+            } else if (stateCubit is LoginStateLoginSuccess) {
+              print('logrado');
+              Navigator.pop(contextCubit);
+            } else if (stateCubit is LoginStateLoginFailed) {
+              print('fallido');
+              Navigator.pop(contextCubit);
+            } else {
+              print('object');
+            }
+          },
           builder: (contextCubit, stateCubit) {
             return Container(
                 alignment: Alignment.center,
@@ -150,6 +156,7 @@ class MyLoginPageState extends State<LoginPage> {
                                                 padding: EdgeInsets.only(
                                                     top: 24, bottom: 12),
                                                 child: TextFormField(
+                                                  controller: _emailController,
                                                   decoration: InputDecoration(
                                                       labelText: "Email"),
                                                 ),
@@ -158,6 +165,7 @@ class MyLoginPageState extends State<LoginPage> {
                                                 padding: EdgeInsets.symmetric(
                                                     vertical: 12),
                                                 child: TextFormField(
+                                                  controller: _passwordController,
                                                   decoration: InputDecoration(
                                                       suffixIcon: IconButton(
                                                         icon: isObscured
@@ -224,9 +232,17 @@ class MyLoginPageState extends State<LoginPage> {
                                                                       vertical:
                                                                           8)),
                                                       onPressed: () {
-                                                        Navigator.of(context)
-                                                            .pushNamed( //Replacement
-                                                                '/main/contacts-wallet');
+                                                        contextCubit
+                                                            .read<LoginCubit>()
+                                                            .loginAccount(
+                                                                _emailController
+                                                                    .text,
+                                                                _passwordController
+                                                                    .text);
+                                                        //Navigator.of(context)
+                                                        //    .pushNamed(
+                                                        //        //Replacement
+                                                        //        '/main/contacts-wallet');
                                                       },
                                                       child: const Text(
                                                         'Continuar',
@@ -239,23 +255,24 @@ class MyLoginPageState extends State<LoginPage> {
                                                       )),
                                                 ),
                                               ),
-                                          Container(
-                                            margin: EdgeInsets.only(
-                                                bottom: 6, top: 2),
-                                            child: TextButton(
-                                                onPressed: () {},
-                                                child: Text(
-                                                    "¿Olvidaste tu contraseña?",
-                                                    style: TextStyle(
-                                                      fontSize: 16,
-                                                        color: Colors.blue)),
-                                              )),
+                                              Container(
+                                                  margin: EdgeInsets.only(
+                                                      bottom: 6, top: 2),
+                                                  child: TextButton(
+                                                    onPressed: () {},
+                                                    child: Text(
+                                                        "¿Olvidaste tu contraseña?",
+                                                        style: TextStyle(
+                                                            fontSize: 16,
+                                                            color:
+                                                                Colors.blue)),
+                                                  )),
                                               RichText(
                                                   text: TextSpan(
                                                       text:
                                                           "¿No tienes una cuenta? ",
                                                       style: TextStyle(
-                                                        fontSize: 16,
+                                                          fontSize: 16,
                                                           color:
                                                               Colors.black54),
                                                       children: [

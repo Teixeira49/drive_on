@@ -4,10 +4,8 @@ class LoginStateInitial extends LoginState {}
 
 class LoginStateLoading extends LoginState {}
 
-class LoginStateLoaded extends LoginState {}
+class LoginStateLoginSuccess extends LoginState {}
 
-class LoginStateLoadedButNotLog extends LoginState {}
-
-class LoginStateLoadedButEmpty extends LoginState {}
+class LoginStateLoginFailed extends LoginState {}
 
 class LoginStateError extends LoginState {}

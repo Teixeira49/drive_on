@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'package:drive_on/src/core/network/error/exceptions.dart';
 import 'package:drive_on/src/core/network/network_url.dart';
@@ -26,14 +28,14 @@ class LoginDatasourceImpl extends LoginDatasource {
     const r = RetryOptions(maxAttempts: 3); // implement
 
     try {
-      final data = await dio.post('$apiUrl/auth/login',
+      final response = await dio.post('$apiUrl/auth/login',
         options: Options(
           sendTimeout: const Duration(seconds: 10),
           receiveTimeout: const Duration(seconds: 10),
         ),
-        data: params.toJson()
+        data: jsonEncode(params)
       );
-      return UserModel.fromJson(data);
+      return UserModel.fromJson(response.data);
     } on DioException catch (e) {
       if (e.type == DioErrorType.cancel) {
         throw CacheException(handleDioError(e));

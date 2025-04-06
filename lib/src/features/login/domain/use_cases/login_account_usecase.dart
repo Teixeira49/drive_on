@@ -14,6 +14,7 @@ class LoginAccountUseCase extends UseCase<User, UserParams> {
   @override
   Future<Either<Failure, User>> call(UserParams params) async {
     final result = await repository.loginUser(params);
+    print(result.fold((l) => l, (r) => r.userEmail));
     return result.fold((l) => Left(l), (r) => Right(r));
   }
 }

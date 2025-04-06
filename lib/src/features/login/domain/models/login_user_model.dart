@@ -12,11 +12,11 @@ class UserModel extends User {
   factory UserModel.fromJson(json) {
     return UserModel(
       userId: json['user']['id'],
-      userEmail: json['user']['id'],
-      userPassword: json['user']['id'],
-      userName: json['user']['id'],
-      userType: json['user']['id'],
-      userDepartment: json['user']['id'],
+      userEmail: json['user']['email'],
+      userPassword: json['user']['password'],
+      userName: json['user']['name'],
+      userType: json['user']['type'],
+      userDepartment: json['user']['department'],
     );
   }
 
