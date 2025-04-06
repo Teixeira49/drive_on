@@ -10,7 +10,7 @@ String getInitialRoute() {
 
 Map<String, WidgetBuilder> getAppRoutes() {
   final commonRoutes = <String, WidgetBuilder> {
-    '/auth/login/': (context) => LoginPage(),
+    '/auth/login/': (context) => const LoginPage(),
     '/main/contacts-wallet': (context) => const MainMenuPage(),
   };
 

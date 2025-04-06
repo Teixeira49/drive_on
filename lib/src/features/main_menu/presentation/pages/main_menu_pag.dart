@@ -1,8 +1,8 @@
-import 'package:drive_on/src/features/main_menu/presentation/cubit/budget_cubit/budget_cubit.dart';
-import 'package:drive_on/src/features/main_menu/presentation/cubit/budget_cubit/budget_state.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../cubit/contacts_cubit/contacts_cubit.dart';
+import '../cubit/contacts_cubit/contacts_state.dart';
 
 class MainMenuPage extends StatefulWidget {
   const MainMenuPage({super.key});
@@ -31,7 +31,7 @@ class MainMenuState extends State<MainMenuPage> {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-            create: (_) => BudgetCubit(BudgetStateInitial()),
+            create: (_) => ContactsCubit(ContactsStateInitial()),
         )
       ],
       child: Scaffold(
@@ -45,8 +45,9 @@ class MainMenuState extends State<MainMenuPage> {
             Text("test")
           ],
         ),
+        //bottomNavigationBar: Bot,
       ),
     );
   }
-
+//context.read<UserCubit>().getUser();
 }
