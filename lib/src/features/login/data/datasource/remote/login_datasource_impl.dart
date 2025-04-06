@@ -46,6 +46,8 @@ class LoginDatasourceImpl extends LoginDatasource {
           }
         } else {
           switch (e.response!.statusCode) {
+            case 400:
+              throw ServerException('Error de peticion');
             case 401:
               throw ServerException('Usuario invalido');
             case 403:
