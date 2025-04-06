@@ -12,6 +12,9 @@ class MainMenuPage extends StatefulWidget {
 }
 
 class MainMenuState extends State<MainMenuPage> {
+  int currentPageIndex = 0;
+  NavigationDestinationLabelBehavior labelBehavior =
+      NavigationDestinationLabelBehavior.alwaysShow;
 
   @override
   void initState() {
@@ -31,7 +34,7 @@ class MainMenuState extends State<MainMenuPage> {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-            create: (_) => ContactsCubit(ContactsStateInitial()),
+          create: (_) => ContactsCubit(ContactsStateInitial()),
         )
       ],
       child: Scaffold(
@@ -40,12 +43,34 @@ class MainMenuState extends State<MainMenuPage> {
           automaticallyImplyLeading: true,
         ),
         body: Column(
-          children: [
-            Text('Data'),
-            Text("test")
+          children: [Text('Data'), Text("test")],
+        ),
+        bottomNavigationBar: NavigationBar(
+          labelBehavior: labelBehavior,
+          selectedIndex: currentPageIndex,
+          onDestinationSelected: (int index) {
+            setState(() {
+              currentPageIndex = index;
+            });
+          },
+          destinations: [
+            NavigationDestination(
+              icon: Icon(Icons.wallet_outlined),
+              selectedIcon: Icon(Icons.wallet),
+              label: 'Presupuesto',
+            ),
+            NavigationDestination(
+                icon: Icon(Icons.home_outlined),
+                selectedIcon: Icon(Icons.home),
+                label: 'Inicio'),
+            NavigationDestination(
+              icon: Icon(Icons.person_outlined),
+              selectedIcon: Icon(Icons.person),
+              label: 'Perfil',
+              tooltip: 'pepe',
+            ),
           ],
         ),
-        //bottomNavigationBar: Bot,
       ),
     );
   }
