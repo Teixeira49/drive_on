@@ -1,4 +1,6 @@
 import 'package:dartz/dartz.dart';
+import 'package:drive_on/src/features/main_menu/domain/models/budget/budget_transaction_dto.dart';
+import 'package:drive_on/src/features/main_menu/domain/models/budget/budget_transaction_params.dart';
 
 
 import '../../../../core/network/error/exceptions.dart';
@@ -31,6 +33,18 @@ class MainMenuRepositoryImpl extends MainMenuRepository {
   Future<Either<Failure, User>> getProfile(ProfileUserParams params) async {
     try {
       final data = await mainMenuRemoteDatasource.getProfile(params);
+      return Right(data);
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message, 'ServerException'));
+    } catch (e) {
+      return Left(OtherFailure(e.toString(), null));
+    }
+  }
+
+  @override
+  Future<Either<Failure, BudgetTransactionsDTO>> getWalletData(BudgetTransactionParams params) async {
+    try {
+      final data = await mainMenuRemoteDatasource.getWalletData(params);
       return Right(data);
     } on ServerException catch (e) {
       return Left(ServerFailure(e.message, 'ServerException'));
