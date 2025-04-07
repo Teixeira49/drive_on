@@ -1,7 +1,7 @@
 import 'package:drive_on/src/features/main_menu/data/entities/security_contacts.dart';
 import 'package:flutter/material.dart';
 
-import 'modal_bottom_sheet.dart';
+import '../modal_bottom_sheet.dart';
 
 class ContactTile extends StatelessWidget {
   final SecurityContacts securityContacts;
