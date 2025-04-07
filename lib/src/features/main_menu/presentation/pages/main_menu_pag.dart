@@ -13,6 +13,7 @@ import '../../data/datasource/remote/main_menu_datasource_impl.dart';
 import '../../domain/use_cases/get_contacts_usecase.dart';
 import '../cubit/contacts_cubit/contacts_cubit.dart';
 import '../cubit/contacts_cubit/contacts_state.dart';
+import '../cubit/profile_cubit/profile_state.dart';
 import '../widgets/contact_tile.dart';
 import '../widgets/gradient_floating_action_button.dart';
 import '../widgets/popup_menu.dart';
@@ -111,11 +112,11 @@ class MainMenuState extends State<MainMenuPage> {
                     automaticallyImplyLeading: false,
                     actions: const [PopupMenu()],
                   ),
-                  body: RefreshIndicator(
+                  body: [RefreshIndicator(
                       onRefresh: () async {
                         print('e');
                       },
-                      child: _contactList(stateCubit, contextCubit)),
+                      child: _contactList(stateCubit, contextCubit)), Container()][_currentPageIndex],
                   floatingActionButton: const GradientFloatingActionButton(),
                   bottomNavigationBar: DynamicNavigationBar(
                     currentIndex: _currentPageIndex,
@@ -474,6 +475,103 @@ class MainMenuState extends State<MainMenuPage> {
                       child: const Text('Reintentar'))
                 ],
               ),))
+      ]);
+    } else {
+      return Container();
+    }
+  }
+
+  Widget _profileBody(ProfileState state, BuildContext context) {
+    if (state is ProfileStateInitial || state is ProfileStateLoading) {
+      return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Container(
+            padding: const EdgeInsets.only(
+                top: 12.0, left: 14.0, right: 14.0, bottom: 22.0),
+            child: ListTile(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20)),
+              title: const Text(
+                'Buscando casos',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                  fontSize: 16,
+                ),
+              ),
+              tileColor: Colors.greenAccent.withOpacity(0.3),
+            )),
+        Expanded(
+            child: Container(
+              alignment: Alignment.center,
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(20.0),
+                  topRight: Radius.circular(20.0),
+                ),
+              ),
+              child: const Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CustomCircularProgressBar(),
+                  SizedBox(
+                    height: 12,
+                  ),
+                  Text('Buscando Perfil'),
+                ],
+              ),
+            ))
+      ]);
+    } else if (state is ProfileStateLoaded) {
+      return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Container(
+            padding: const EdgeInsets.only(
+                top: 12.0, left: 14.0, right: 14.0, bottom: 22.0),
+            child: ListTile(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20)),
+              title: const Text(
+                'Buscando casos',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                  fontSize: 16,
+                ),
+              ),
+              tileColor: Colors.greenAccent.withOpacity(0.3),
+            )),
+        Expanded(
+            child: Container(
+                alignment: Alignment.center,
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(20.0),
+                    topRight: Radius.circular(20.0),
+                  ),
+                ),
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      ListTile(title: const Text('Correo'),
+                        subtitle: Text(state.user.userEmail),),
+                      ListTile(title: const Text('Plan'),
+                        subtitle: Text(state.user.userType),),
+                      Visibility(
+                        visible: state.user.userType == typeCorporate,
+                        child: ListTile(title: const Text('Departamento'),
+                          subtitle: Text('${state.user.userId}'),),
+                      ),
+                      ListTile(title: const Text('Id Usuario'),
+                        subtitle: Text('${state.user.userId}'),),
+                      Divider(),
+
+                    ],
+                  ),
+                )))
       ]);
     } else {
       return Container();

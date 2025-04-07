@@ -1,8 +1,8 @@
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../domain/models/profile_user_params.dart';
-import '../../../domain/use_cases/get_profile_use_case.dart';
+import '../../../../main_menu/domain/models/profile_user_params.dart';
+import '../../../../main_menu/domain/use_cases/get_profile_use_case.dart';
 import 'profile_state.dart';
 
 class ProfileCubit extends Cubit<ProfileState> {
@@ -17,6 +17,7 @@ class ProfileCubit extends Cubit<ProfileState> {
   Future<void> getProfile(int id) async {
     try {
       emit(ProfileStateLoading());
+      print('a');
       final data = await getProfileUseCase
           .call(ProfileUserParams(id: id));
       data.fold(
