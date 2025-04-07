@@ -5,10 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/config/styles/static_colors.dart';
+import '../../../../core/helpers/helpers.dart';
 import '../../../../core/utils/constants/app_constants.dart';
 import '../../../../shared/presentation/cubit/user_cubit/user_cubit.dart';
 import '../../../../shared/presentation/widgets/custom_progress_indicator.dart';
 import '../../../../shared/presentation/widgets/dynamic_bottom_bar.dart';
+import '../../../../shared/presentation/widgets/floating_snack_bars.dart';
 import '../../data/datasource/remote/main_menu_datasource_impl.dart';
 import '../../domain/use_cases/get_contacts_usecase.dart';
 import '../../domain/use_cases/get_profile_use_case.dart';
@@ -110,6 +112,7 @@ class MainMenuState extends State<MainMenuPage> {
                     appBar: AppBar(
                       title: Text(
                         [
+                          if (context.read<UserCubit>().getUser()?.userType == typeCorporate) ' Presupuesto',
                           ' Hola, ${context.read<UserCubit>().getUser()?.userName ?? 'Usuario'}',
                           ' Perfil'
                         ][_currentPageIndex],
@@ -120,20 +123,17 @@ class MainMenuState extends State<MainMenuPage> {
                         ),
                       ),
                       automaticallyImplyLeading: false,
-                      actions: [PopupMenu(visibility: _currentPageIndex, ref: _viewFABIndex)],
+                      actions: [
+                        PopupMenu(
+                          visibility: _currentPageIndex,
+                          ref: _viewFABIndex,
+                        )
+                      ],
                     ),
                     body: [
-                      RefreshIndicator(
-                          onRefresh: () async {
-                            print('e');
-                          },
-                          child: _contactList(stateCubit, contextCubit)),
-                      RefreshIndicator(
-                          onRefresh: () async {
-                            print('e');
-                          },
-                          child: _profileBody(
-                              stateCubitProfile, contextCubitProfile))
+                      if (context.read<UserCubit>().getUser()?.userType == typeCorporate) Container(),
+                      _contactList(stateCubit, contextCubit, id),
+                      _profileBody(stateCubitProfile, contextCubitProfile, id),
                     ][_currentPageIndex],
                     floatingActionButton: Visibility(
                         visible: _viewFABIndex == _currentPageIndex,
@@ -148,7 +148,7 @@ class MainMenuState extends State<MainMenuPage> {
         }));
   }
 
-  Widget _contactList(ContactsState state, BuildContext context) {
+  Widget _contactList(ContactsState state, BuildContext context, int id) {
     if (state is ContactsStateInitial || state is ContactsStateLoading) {
       return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Container(
@@ -289,28 +289,28 @@ class MainMenuState extends State<MainMenuPage> {
                     topRight: Radius.circular(20.0),
                   ),
                 ),
-                child: GestureDetector(
-                  onVerticalDragDown: (DragDownDetails details) {
-                    if (details.globalPosition.dy < 50) {}
-                  },
-                  child: Scrollbar(
-                    controller: _scrollController,
-                    radius: const Radius.circular(45),
-                    child: ListView.builder(
-                        //padding: ,
+                child: RefreshIndicator(
+                    onRefresh: () async {
+                      context.read<ContactsCubit>().getMyAllocatedContacts(id);
+                    },
+                    child: Scrollbar(
                         controller: _scrollController,
-                        itemCount: filteredContacts.length,
-                        itemBuilder: (context, index) {
-                          if (index >= state.securityContacts.length) {
-                            return const Center(
-                                child: CustomCircularProgressBar());
-                          }
-                          return ContactTile(
-                            securityContacts: filteredContacts[index],
-                          );
-                        }),
+                        radius: const Radius.circular(45),
+                        child: ListView.builder(
+                            //padding: ,
+                            controller: _scrollController,
+                            itemCount: filteredContacts.length,
+                            itemBuilder: (context, index) {
+                              if (index >= state.securityContacts.length) {
+                                return const Center(
+                                    child: CustomCircularProgressBar());
+                              }
+                              return ContactTile(
+                                securityContacts: filteredContacts[index],
+                              );
+                            })),
                   ),
-                )),
+                ),
           )
         ],
       );
@@ -505,25 +505,14 @@ class MainMenuState extends State<MainMenuPage> {
     }
   }
 
-  Widget _profileBody(ProfileState state, BuildContext context) {
+  Widget _profileBody(ProfileState state, BuildContext context, int id) {
     if (state is ProfileStateInitial || state is ProfileStateLoading) {
       return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Container(
-            padding: const EdgeInsets.only(
-                top: 12.0, left: 14.0, right: 14.0, bottom: 22.0),
-            child: ListTile(
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20)),
-              title: const Text(
-                'Buscando casos',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                  fontSize: 16,
-                ),
-              ),
-              tileColor: Colors.greenAccent.withOpacity(0.3),
-            )),
+          padding: const EdgeInsets.only(
+            top: 8.0,
+          ),
+        ),
         Expanded(
             child: Container(
           alignment: Alignment.center,
@@ -550,59 +539,196 @@ class MainMenuState extends State<MainMenuPage> {
     } else if (state is ProfileStateLoaded) {
       return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Container(
-            padding: const EdgeInsets.only(
-                top: 12.0, left: 14.0, right: 14.0, bottom: 22.0),
-            child: ListTile(
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20)),
-              title: const Text(
-                'Buscando casos',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                  fontSize: 16,
-                ),
-              ),
-              tileColor: Colors.greenAccent.withOpacity(0.3),
-            )),
+          padding: const EdgeInsets.only(
+            top: 8.0,
+          ),
+        ),
         Expanded(
             child: Container(
-                alignment: Alignment.center,
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(20.0),
-                    topRight: Radius.circular(20.0),
+          alignment: Alignment.center,
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(20.0),
+              topRight: Radius.circular(20.0),
+            ),
+          ),
+          child: RefreshIndicator(
+              onRefresh: () async {
+                context.read<ProfileCubit>().getProfile(id);
+              },
+              child: SingleChildScrollView(child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  Container(
+                    margin: const EdgeInsets.only(bottom: 12),
+                    child: const CircleAvatar(
+                      radius: 45.0,
+                      backgroundColor: Colors.blue,
+                      child: Icon(
+                        Icons.account_circle,
+                        size: 84,
+                      ),
+                    ),
                   ),
-                ),
-                child: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      ListTile(
-                        title: const Text('Correo'),
-                        subtitle: Text(state.user.userEmail),
-                      ),
-                      ListTile(
-                        title: const Text('Plan'),
-                        subtitle: Text(state.user.userType),
-                      ),
-                      Visibility(
-                        visible: state.user.userType == typeCorporate,
-                        child: ListTile(
-                          title: const Text('Departamento'),
-                          subtitle: Text('${state.user.userId}'),
+                  Container(
+                    margin: const EdgeInsets.symmetric(vertical: 12),
+                    child: Text(
+                      state.user.userName,
+                      style: const TextStyle(
+                          fontWeight: FontWeight.bold, fontSize: 24),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 6,
+                  ),
+                  Card(
+                    elevation: 5,
+                    child: Column(
+                      children: [
+                        ListTile(
+                          leading: const Icon(Icons.email),
+                          title: const Text(
+                            'Correo',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          trailing: Text(
+                            state.user.userEmail,
+                            style: const TextStyle(fontSize: 14),
+                          ),
                         ),
-                      ),
-                      ListTile(
-                        title: const Text('Id Usuario'),
-                        subtitle: Text('${state.user.userId}'),
-                      ),
-                      Divider(),
-                    ],
+                        const Divider(
+                          indent: 16,
+                          endIndent: 16,
+                          height: 12,
+                        ),
+                        ListTile(
+                          leading: const Icon(Icons.wallet),
+                          title: const Text(
+                            'Plan',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          trailing: Text(
+                            Helper.capitalize(state.user.userType),
+                            style: const TextStyle(fontSize: 14),
+                          ),
+                        ),
+                        Visibility(
+                          visible: state.user.userType == typeCorporate,
+                          child: const Divider(
+                            indent: 16,
+                            endIndent: 16,
+                            height: 12,
+                          ),
+                        ),
+                        Visibility(
+                          visible: state.user.userType == typeCorporate,
+                          child: ListTile(
+                            leading: const Icon(Icons.factory),
+                            title: const Text(
+                              'Departamento',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            trailing: Text(
+                              Helper.upper(
+                                  state.user.userDepartment ?? ''),
+                              style: const TextStyle(fontSize: 14),
+                            ),
+                          ),
+                        ),
+                        const Divider(
+                          indent: 16,
+                          endIndent: 16,
+                          height: 12,
+                        ),
+                        ListTile(
+                          leading: const Icon(Icons.verified_user),
+                          title: const Text(
+                            'Id Usuario',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          trailing: Text(
+                            '${state.user.userId}',
+                            style: const TextStyle(
+                              fontSize: 14,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                )))
+                  const SizedBox(
+                    height: 12,
+                  ),
+                  Card(
+                    elevation: 5,
+                    child: Column(
+                      children: [
+                        ListTile(
+                          shape: RoundedRectangleBorder(
+                            borderRadius:
+                            BorderRadius.circular(12),
+                          ),
+                          title: const Text(
+                            'Editar Perfil',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          leading: const Icon(Icons.edit),
+                          trailing: const Icon(Icons.navigate_next),
+                          onTap: () {
+                            Future.delayed(const Duration(seconds: 100), () {
+                              FloatingSnackBar.show(context, "Proximamente");
+                            });
+                          },
+                        ),
+                        const Divider(
+                          indent: 16,
+                          endIndent: 16,
+                          height: 12,
+                        ),
+                        ListTile(
+                            shape: RoundedRectangleBorder(
+                              borderRadius:
+                              BorderRadius.circular(12),
+                            ),
+                            title: const Text(
+                              'Cambiar plan',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            leading: const Icon(Icons.file_upload),
+                            trailing: const Icon(Icons.navigate_next),
+                            onTap: () {
+                              Future.delayed(const Duration(seconds: 100), () {
+                                FloatingSnackBar.show(context, "Proximamente");
+                              });
+                            }),
+                        const Divider(
+                          indent: 16,
+                          endIndent: 16,
+                          height: 12,
+                        ),
+                        ListTile(
+                            shape: RoundedRectangleBorder(
+                              borderRadius:
+                              BorderRadius.circular(12),
+                            ),
+                            title: const Text(
+                              'Cerrar Sesion',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            leading: const Icon(Icons.logout),
+                            trailing: const Icon(Icons.navigate_next),
+                            onTap: () {
+                              Navigator.of(context).pop();
+                            }),
+                      ],
+                    ),
+                  ),
+                ],
+              ))),
+        ))
       ]);
     } else {
       return Container();
