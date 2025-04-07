@@ -1,7 +1,7 @@
 import 'package:drive_on/src/features/main_menu/data/entities/security_contacts.dart';
 import 'package:flutter/material.dart';
 
-import 'modal_bottom_sheet.dart';
+import '../modal_bottom_sheet.dart';
 
 class ContactTile extends StatelessWidget {
   final SecurityContacts securityContacts;
@@ -17,6 +17,10 @@ class ContactTile extends StatelessWidget {
       children: [
         const SizedBox(height: 3,),
         ListTile(
+          shape: RoundedRectangleBorder(
+            borderRadius:
+            BorderRadius.circular(12),
+          ),
           title: Text(securityContacts.name),
           subtitle: Wrap(children: [
             //const Icon(Icons.phone),
