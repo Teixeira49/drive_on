@@ -10,5 +10,12 @@ abstract class ColorPalette {
     Colors.blue
   ];
 
+  static List<Color> mainGradient = [
+    Colors.blue,
+    Colors.cyanAccent,
+  ];
+
+  static double elevationScaleNone = 0;
+  static double elevationScaleS = 5;
   static double elevationScaleM = 10;
 }

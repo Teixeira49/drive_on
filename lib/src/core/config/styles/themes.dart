@@ -6,13 +6,13 @@ abstract class AppTheme {
       brightness: Brightness.light,
       fontFamily: 'gotham',
       primaryColor: const Color.fromRGBO(77, 5, 166, 1.0),
-      scaffoldBackgroundColor: Colors.white,
+      scaffoldBackgroundColor: Colors.transparent,
       splashColor: const Color.fromRGBO(87, 183, 255, 1.0),
       iconTheme: const IconThemeData(color: Color.fromRGBO(58, 58, 58, 1.0)),
       appBarTheme: const AppBarTheme(
-        elevation: 7.5,
-        backgroundColor: Color.fromRGBO(20, 154, 255, 1.0),
-        shadowColor: Color.fromRGBO(97, 155, 201, 0.7490196078431373),
+        //elevation: 7.5,
+        backgroundColor: Colors.transparent,//Color.fromRGBO(20, 154, 255, 1.0),
+        //shadowColor: Color.fromRGBO(97, 155, 201, 0.7490196078431373),
         titleTextStyle: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,

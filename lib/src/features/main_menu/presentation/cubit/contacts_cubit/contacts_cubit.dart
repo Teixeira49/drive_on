@@ -19,13 +19,14 @@ class ContactsCubit extends Cubit<ContactsState> {
       emit(ContactsStateLoading());
       final data =
           await getContactsUseCase.call(SecurityContactsParams(userId: userId));
+      print(data);
       data.fold(
           (l) => l.failType == 'AccountException'
               ? emit(ContactsStateErrorLoading(message: l.message))
               : emit(ContactsStateError(message: l.message)),
           (r) => r.isNotEmpty
-              ? ContactsStateLoaded(securityContacts: r)
-              : ContactsStateLoadedButEmpty(message: emptyContactList));
+              ? emit(ContactsStateLoaded(securityContacts: r))
+              : emit(ContactsStateLoadedButEmpty(message: emptyContactList)));
     } catch (e) {
       emit(ContactsStateCatchError(message: e.toString()));
     } finally {

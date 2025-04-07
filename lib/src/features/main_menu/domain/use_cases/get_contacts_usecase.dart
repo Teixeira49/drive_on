@@ -19,6 +19,7 @@ class GetContactsUseCase
     if (params.getUserId() == -1) {
       return Left(OtherFailure('Error al cargar cuenta', 'AccountException'));
     }
+    print(params.userId);
     final result = await repository.getSecurityContacts(params);
     return result.fold(
             (l) => Left(l),
