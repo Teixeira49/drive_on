@@ -11,8 +11,10 @@ import '../../../../shared/presentation/widgets/custom_progress_indicator.dart';
 import '../../../../shared/presentation/widgets/dynamic_bottom_bar.dart';
 import '../../data/datasource/remote/main_menu_datasource_impl.dart';
 import '../../domain/use_cases/get_contacts_usecase.dart';
+import '../../domain/use_cases/get_profile_use_case.dart';
 import '../cubit/contacts_cubit/contacts_cubit.dart';
 import '../cubit/contacts_cubit/contacts_state.dart';
+import '../cubit/profile_cubit/profile_cubit.dart';
 import '../cubit/profile_cubit/profile_state.dart';
 import '../widgets/contact_tile.dart';
 import '../widgets/gradient_floating_action_button.dart';
@@ -27,6 +29,7 @@ class MainMenuPage extends StatefulWidget {
 
 class MainMenuState extends State<MainMenuPage> {
   int _currentPageIndex = 1;
+  int _viewFABIndex = 1;
   bool _isInit = true;
 
   NavigationDestinationLabelBehavior labelBehavior =
@@ -44,12 +47,10 @@ class MainMenuState extends State<MainMenuPage> {
   @override
   void didChangeDependencies() {
     if (_isInit) {
-      final argument = ModalRoute
-          .of(context)!
-          .settings
-          .arguments as Map;
+      final argument = ModalRoute.of(context)!.settings.arguments as Map;
       if (argument['userIndex'] != null) {
         _currentPageIndex = argument['userIndex'];
+        _viewFABIndex = _currentPageIndex;
       }
     }
     super.didChangeDependencies();
@@ -78,6 +79,8 @@ class MainMenuState extends State<MainMenuPage> {
         MainMenuRepositoryImpl(mainMenuRemoteDatasource);
     final GetContactsUseCase getContactsUseCase =
         GetContactsUseCase(mainMenuRepository);
+    final GetProfileUseCase getProfileUseCase =
+        GetProfileUseCase(mainMenuRepository);
 
     final int id = context.read<UserCubit>().getUser() != null
         ? context.read<UserCubit>().getUser()!.userId
@@ -86,50 +89,68 @@ class MainMenuState extends State<MainMenuPage> {
     return MultiBlocProvider(
         providers: [
           BlocProvider(
+              create: (_) => ProfileCubit(getProfileUseCase)..getProfile(id)),
+          BlocProvider(
             create: (_) =>
                 ContactsCubit(getContactsUseCase)..getMyAllocatedContacts(id),
-          )
+          ),
         ],
         child: BlocBuilder<ContactsCubit, ContactsState>(
             builder: (contextCubit, stateCubit) {
-          return Container(
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                      begin: Alignment.centerLeft,
-                      end: Alignment.centerRight,
-                      colors: ColorPalette.mainGradient)),
-              child: Scaffold(
-                  appBar: AppBar(
-                    title: Text(
-                      ' Hola, ${context.read<UserCubit>().getUser()?.userName ?? 'Usuario'}',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 22.0,
-                        fontWeight: FontWeight.w700,
+          return BlocBuilder<ProfileCubit, ProfileState>(
+              builder: (contextCubitProfile, stateCubitProfile) {
+            return Container(
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                        begin: Alignment.centerLeft,
+                        end: Alignment.centerRight,
+                        colors: ColorPalette.mainGradient)),
+                child: Scaffold(
+                    appBar: AppBar(
+                      title: Text(
+                        [
+                          ' Hola, ${context.read<UserCubit>().getUser()?.userName ?? 'Usuario'}',
+                          ' Perfil'
+                        ][_currentPageIndex],
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 22.0,
+                          fontWeight: FontWeight.w700,
+                        ),
                       ),
+                      automaticallyImplyLeading: false,
+                      actions: [PopupMenu(visibility: _currentPageIndex, ref: _viewFABIndex)],
                     ),
-                    automaticallyImplyLeading: false,
-                    actions: const [PopupMenu()],
-                  ),
-                  body: [RefreshIndicator(
-                      onRefresh: () async {
-                        print('e');
-                      },
-                      child: _contactList(stateCubit, contextCubit)), Container()][_currentPageIndex],
-                  floatingActionButton: const GradientFloatingActionButton(),
-                  bottomNavigationBar: DynamicNavigationBar(
-                    currentIndex: _currentPageIndex,
-                    onTap: _changeView,
-                    userType: context.read<UserCubit>().getUser()?.userType ??
-                        typePersonal,
-                  )));
+                    body: [
+                      RefreshIndicator(
+                          onRefresh: () async {
+                            print('e');
+                          },
+                          child: _contactList(stateCubit, contextCubit)),
+                      RefreshIndicator(
+                          onRefresh: () async {
+                            print('e');
+                          },
+                          child: _profileBody(
+                              stateCubitProfile, contextCubitProfile))
+                    ][_currentPageIndex],
+                    floatingActionButton: Visibility(
+                        visible: _viewFABIndex == _currentPageIndex,
+                        child: const GradientFloatingActionButton()),
+                    bottomNavigationBar: DynamicNavigationBar(
+                      currentIndex: _currentPageIndex,
+                      onTap: _changeView,
+                      userType: context.read<UserCubit>().getUser()?.userType ??
+                          typePersonal,
+                    )));
+          });
         }));
   }
 
   Widget _contactList(ContactsState state, BuildContext context) {
     if (state is ContactsStateInitial || state is ContactsStateLoading) {
-      return  Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Container(
             padding: const EdgeInsets.only(
                 top: 12.0, left: 14.0, right: 14.0, bottom: 22.0),
@@ -148,21 +169,20 @@ class MainMenuState extends State<MainMenuPage> {
             )),
         Expanded(
             child: Container(
-              alignment: Alignment.center,
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(20.0),
-                  topRight: Radius.circular(20.0),
-                ),
-              ),
-              child: const Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  CustomCircularProgressBar()
-                ],
-              ),))
+          alignment: Alignment.center,
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(20.0),
+              topRight: Radius.circular(20.0),
+            ),
+          ),
+          child: const Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [CustomCircularProgressBar()],
+          ),
+        ))
       ]);
     } else if (state is ContactsStateLoadedButEmpty) {
       return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -192,41 +212,42 @@ class MainMenuState extends State<MainMenuPage> {
             )),
         Expanded(
             child: Container(
-              width: double.infinity,
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(20.0),
-                    topRight: Radius.circular(20.0),
-                  ),
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisSize: MainAxisSize.max,
-                  children: [
-                    const Icon(
-                      Icons.error,
-                      size: 48,
-                    ),
-                    Text(state.message),
-                    ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                            elevation: 5,
-                            backgroundColor: Colors.transparent,
-                            shadowColor: Colors.transparent,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(30),
-                            ),
-                            alignment: Alignment.center,
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 24, vertical: 8)),
-                        onPressed: () {
-                          context.read<ContactsCubit>().getMyAllocatedContacts(1);
-                        },
-                        child: const Text('Reintentar'))
-                  ],
-                ),))
+          width: double.infinity,
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(20.0),
+              topRight: Radius.circular(20.0),
+            ),
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              const Icon(
+                Icons.error,
+                size: 48,
+              ),
+              Text(state.message),
+              ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                      elevation: 5,
+                      backgroundColor: Colors.transparent,
+                      shadowColor: Colors.transparent,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                      alignment: Alignment.center,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 24, vertical: 8)),
+                  onPressed: () {
+                    context.read<ContactsCubit>().getMyAllocatedContacts(1);
+                  },
+                  child: const Text('Reintentar'))
+            ],
+          ),
+        ))
       ]);
     } else if (state is ContactsStateLoaded) {
       final filteredContacts = state.securityContacts;
@@ -322,37 +343,38 @@ class MainMenuState extends State<MainMenuPage> {
             )),
         Expanded(
             child: Container(
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(20.0),
-                  topRight: Radius.circular(20.0),
-                ),
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(20.0),
+              topRight: Radius.circular(20.0),
+            ),
+          ),
+          child: Column(
+            children: [
+              const Icon(
+                Icons.error,
+                size: 48,
               ),
-              child: Column(
-                children: [
-                  const Icon(
-                    Icons.error,
-                    size: 48,
-                  ),
-                  Text(state.message),
-                  ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                          elevation: 5,
-                          backgroundColor: Colors.transparent,
-                          shadowColor: Colors.transparent,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                          alignment: Alignment.center,
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 24, vertical: 8)),
-                      onPressed: () {
-                        context.read<ContactsCubit>().getMyAllocatedContacts(1);
-                      },
-                      child: const Text('Reintentar'))
-                ],
-              ),))
+              Text(state.message),
+              ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                      elevation: 5,
+                      backgroundColor: Colors.transparent,
+                      shadowColor: Colors.transparent,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                      alignment: Alignment.center,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 24, vertical: 8)),
+                  onPressed: () {
+                    context.read<ContactsCubit>().getMyAllocatedContacts(1);
+                  },
+                  child: const Text('Reintentar'))
+            ],
+          ),
+        ))
       ]);
     } else if (state is ContactsStateError) {
       return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -383,37 +405,38 @@ class MainMenuState extends State<MainMenuPage> {
             )),
         Expanded(
             child: Container(
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(20.0),
-                  topRight: Radius.circular(20.0),
-                ),
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(20.0),
+              topRight: Radius.circular(20.0),
+            ),
+          ),
+          child: Column(
+            children: [
+              const Icon(
+                Icons.error,
+                size: 48,
               ),
-              child: Column(
-                children: [
-                  const Icon(
-                    Icons.error,
-                    size: 48,
-                  ),
-                  Text(state.message),
-                  ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                          elevation: 5,
-                          backgroundColor: Colors.transparent,
-                          shadowColor: Colors.transparent,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                          alignment: Alignment.center,
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 24, vertical: 8)),
-                      onPressed: () {
-                        context.read<ContactsCubit>().getMyAllocatedContacts(1);
-                      },
-                      child: const Text('Reintentar'))
-                ],
-              ),))
+              Text(state.message),
+              ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                      elevation: 5,
+                      backgroundColor: Colors.transparent,
+                      shadowColor: Colors.transparent,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                      alignment: Alignment.center,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 24, vertical: 8)),
+                  onPressed: () {
+                    context.read<ContactsCubit>().getMyAllocatedContacts(1);
+                  },
+                  child: const Text('Reintentar'))
+            ],
+          ),
+        ))
       ]);
     } else if (state is ContactsStateCatchError) {
       return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -444,37 +467,38 @@ class MainMenuState extends State<MainMenuPage> {
             )),
         Expanded(
             child: Container(
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(20.0),
-                  topRight: Radius.circular(20.0),
-                ),
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(20.0),
+              topRight: Radius.circular(20.0),
+            ),
+          ),
+          child: Column(
+            children: [
+              const Icon(
+                Icons.error,
+                size: 48,
               ),
-              child: Column(
-                children: [
-                  const Icon(
-                    Icons.error,
-                    size: 48,
-                  ),
-                  Text(state.message),
-                  ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                          elevation: 5,
-                          backgroundColor: Colors.transparent,
-                          shadowColor: Colors.transparent,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                          alignment: Alignment.center,
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 24, vertical: 8)),
-                      onPressed: () {
-                        context.read<ContactsCubit>().getMyAllocatedContacts(1);
-                      },
-                      child: const Text('Reintentar'))
-                ],
-              ),))
+              Text(state.message),
+              ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                      elevation: 5,
+                      backgroundColor: Colors.transparent,
+                      shadowColor: Colors.transparent,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                      alignment: Alignment.center,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 24, vertical: 8)),
+                  onPressed: () {
+                    context.read<ContactsCubit>().getMyAllocatedContacts(1);
+                  },
+                  child: const Text('Reintentar'))
+            ],
+          ),
+        ))
       ]);
     } else {
       return Container();
@@ -502,26 +526,26 @@ class MainMenuState extends State<MainMenuPage> {
             )),
         Expanded(
             child: Container(
-              alignment: Alignment.center,
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(20.0),
-                  topRight: Radius.circular(20.0),
-                ),
+          alignment: Alignment.center,
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(20.0),
+              topRight: Radius.circular(20.0),
+            ),
+          ),
+          child: const Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              CustomCircularProgressBar(),
+              SizedBox(
+                height: 12,
               ),
-              child: const Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  CustomCircularProgressBar(),
-                  SizedBox(
-                    height: 12,
-                  ),
-                  Text('Buscando Perfil'),
-                ],
-              ),
-            ))
+              Text('Buscando Perfil'),
+            ],
+          ),
+        ))
       ]);
     } else if (state is ProfileStateLoaded) {
       return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -556,19 +580,26 @@ class MainMenuState extends State<MainMenuPage> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      ListTile(title: const Text('Correo'),
-                        subtitle: Text(state.user.userEmail),),
-                      ListTile(title: const Text('Plan'),
-                        subtitle: Text(state.user.userType),),
+                      ListTile(
+                        title: const Text('Correo'),
+                        subtitle: Text(state.user.userEmail),
+                      ),
+                      ListTile(
+                        title: const Text('Plan'),
+                        subtitle: Text(state.user.userType),
+                      ),
                       Visibility(
                         visible: state.user.userType == typeCorporate,
-                        child: ListTile(title: const Text('Departamento'),
-                          subtitle: Text('${state.user.userId}'),),
+                        child: ListTile(
+                          title: const Text('Departamento'),
+                          subtitle: Text('${state.user.userId}'),
+                        ),
                       ),
-                      ListTile(title: const Text('Id Usuario'),
-                        subtitle: Text('${state.user.userId}'),),
+                      ListTile(
+                        title: const Text('Id Usuario'),
+                        subtitle: Text('${state.user.userId}'),
+                      ),
                       Divider(),
-
                     ],
                   ),
                 )))

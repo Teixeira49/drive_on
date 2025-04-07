@@ -17,6 +17,7 @@ class ContactsCubit extends Cubit<ContactsState> {
   Future<void> getMyAllocatedContacts(int userId) async {
     try {
       emit(ContactsStateLoading());
+      print('a');
       final data =
           await getContactsUseCase.call(SecurityContactsParams(userId: userId));
       print(data);

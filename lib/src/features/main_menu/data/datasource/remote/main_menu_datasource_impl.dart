@@ -87,7 +87,7 @@ class MainMenuRemoteDatasourceImpl implements MainMenuRemoteDatasource {
     const r = RetryOptions(maxAttempts: 3);
 
     try {
-      final response = await r.retry(() => dio.get('$apiUrl/security-contacts/${params.getUserId()}',
+      final response = await r.retry(() => dio.get('$apiUrl/profile/${params.getUserId()}',
         options: Options(
           sendTimeout: const Duration(seconds: 10),
           receiveTimeout: const Duration(seconds: 10),
