@@ -3,14 +3,14 @@ import '../../data/entities/security_contacts.dart';
 class SecurityContactsModel extends SecurityContacts {
   SecurityContactsModel({
     required super.name,
-    required super.number,
+    required super.phone,
     required super.relationship,
   });
 
   factory SecurityContactsModel.fromJson(json) {
     return SecurityContactsModel(
       name: json['name'],
-      number: json['number'],
+      phone: json['phone'],
       relationship: json['relationship'],
     );
   }
@@ -18,7 +18,7 @@ class SecurityContactsModel extends SecurityContacts {
   Map<String, dynamic> toJson() {
     return {
       'name': name,
-      'number': number,
+      'phone': phone,
       'relationship': relationship,
     };
   }
@@ -26,7 +26,7 @@ class SecurityContactsModel extends SecurityContacts {
   factory SecurityContactsModel.fromEntity(SecurityContacts contact) {
     return SecurityContactsModel(
       name: contact.name,
-      number: contact.number,
+      phone: contact.phone,
       relationship: contact.relationship,
     );
   }

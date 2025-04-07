@@ -1,8 +1,8 @@
 class SecurityContacts {
   String name;
-  String number;
-  String relationship;
+  String phone;
+  String? relationship;
 
   SecurityContacts(
-      {required this.name, required this.number, required this.relationship});
+      {required this.name, required this.phone, this.relationship});
 }

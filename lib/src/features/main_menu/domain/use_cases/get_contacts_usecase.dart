@@ -16,7 +16,11 @@ class GetContactsUseCase
   @override
   Future<Either<Failure, List<SecurityContacts>>> call(
       SecurityContactsParams params) async {
-    final result = await repository.getSecurityContacts(params.userId);
+    if (params.getUserId() == -1) {
+      return Left(OtherFailure('Error al cargar cuenta', 'AccountException'));
+    }
+    print(params.userId);
+    final result = await repository.getSecurityContacts(params);
     return result.fold(
             (l) => Left(l),
             (r) => Right(r)
