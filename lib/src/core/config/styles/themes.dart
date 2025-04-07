@@ -21,6 +21,12 @@ abstract class AppTheme {
             fontFamily: "gotham"),
         iconTheme: IconThemeData(color: Color.fromRGBO(255, 255, 255, 1.0)),
       ),
+      navigationBarTheme: NavigationBarThemeData(
+        elevation: 0,
+        indicatorColor: Colors.blue.withOpacity(0.45),
+        backgroundColor: Colors.white,
+
+      )
     );
   }
 

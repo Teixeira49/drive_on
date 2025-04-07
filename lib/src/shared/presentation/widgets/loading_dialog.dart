@@ -10,9 +10,10 @@ class LoadingShowDialog {
         barrierDismissible: false,
         builder: (BuildContext dialogContext) =>
             AlertDialog(
-              backgroundColor: Theme
-                  .of(dialogContext)
-                  .scaffoldBackgroundColor,
+              backgroundColor: Colors.white,
+              //Theme
+              //    .of(dialogContext)
+              //    .scaffoldBackgroundColor,
               content: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
