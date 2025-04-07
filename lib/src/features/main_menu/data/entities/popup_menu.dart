@@ -6,4 +6,5 @@ enum PopUpMenuItem {
   item3Config,
   item4Logout,
   item5edit,
+  item6changePlan,
 }
