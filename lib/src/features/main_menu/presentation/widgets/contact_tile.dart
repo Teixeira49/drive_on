@@ -17,6 +17,10 @@ class ContactTile extends StatelessWidget {
       children: [
         const SizedBox(height: 3,),
         ListTile(
+          shape: RoundedRectangleBorder(
+            borderRadius:
+            BorderRadius.circular(12),
+          ),
           title: Text(securityContacts.name),
           subtitle: Wrap(children: [
             //const Icon(Icons.phone),
