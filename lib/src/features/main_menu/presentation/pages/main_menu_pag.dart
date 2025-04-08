@@ -200,7 +200,16 @@ class MainMenuState extends State<MainMenuPage> {
           child: const Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
-            children: [CustomCircularProgressBar()],
+            children: [
+              CustomCircularProgressBar(),
+              SizedBox(
+                height: 12,
+              ),
+              Text(
+                'Buscando Perfil',
+                style: TextStyle(fontSize: 16),
+              ),
+            ],
           ),
         ))
       ]);
@@ -245,11 +254,25 @@ class MainMenuState extends State<MainMenuPage> {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisSize: MainAxisSize.max,
             children: [
-              const Icon(
-                Icons.error,
-                size: 48,
+              const SizedBox(
+                height: 128,
               ),
-              Text(state.message),
+              Icon(
+                Icons.error,
+                size: 72,
+                color: ColorPalette.alert,
+              ),
+              const SizedBox(
+                height: 16,
+              ),
+              Text(
+                state.message,
+                style:
+                    const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(
+                height: 102,
+              ),
               ElevatedButton(
                   style: ElevatedButton.styleFrom(
                       elevation: 5,
@@ -264,7 +287,9 @@ class MainMenuState extends State<MainMenuPage> {
                   onPressed: () {
                     context.read<ContactsCubit>().getMyAllocatedContacts(id);
                   },
-                  child: const Text('Reintentar'))
+                  child: const Text('Reintentar',
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold)))
             ],
           ),
         ))
@@ -335,7 +360,9 @@ class MainMenuState extends State<MainMenuPage> {
           )
         ],
       );
-    } else if (state is ContactsStateErrorLoading) {
+    } else if (state is ContactsStateErrorLoading ||
+        state is ContactsStateError ||
+        state is ContactsStateCatchError) {
       return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Container(
             padding: const EdgeInsets.only(
@@ -374,11 +401,25 @@ class MainMenuState extends State<MainMenuPage> {
           ),
           child: Column(
             children: [
-              const Icon(
-                Icons.error,
-                size: 48,
+              const SizedBox(
+                height: 128,
               ),
-              Text(state.message),
+              Icon(
+                Icons.error,
+                size: 72,
+                color: ColorPalette.alert,
+              ),
+              const SizedBox(
+                height: 16,
+              ),
+              Text(
+                _errorContactMessage(state),
+                style:
+                    const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(
+                height: 102,
+              ),
               ElevatedButton(
                   style: ElevatedButton.styleFrom(
                       elevation: 5,
@@ -393,139 +434,27 @@ class MainMenuState extends State<MainMenuPage> {
                   onPressed: () {
                     context.read<ContactsCubit>().getMyAllocatedContacts(id);
                   },
-                  child: const Text('Reintentar'))
-            ],
-          ),
-        ))
-      ]);
-    } else if (state is ContactsStateError) {
-      return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Container(
-            padding: const EdgeInsets.only(
-                top: 12.0, left: 14.0, right: 14.0, bottom: 22.0),
-            child: ListTile(
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20)),
-              title: const Text(
-                'N° Contactos',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                  fontSize: 16,
-                ),
-              ),
-              trailing: const Text(
-                '# - Error',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontStyle: FontStyle.italic,
-                  color: Colors.white,
-                  fontSize: 16,
-                ),
-              ),
-              tileColor: Colors.greenAccent.withOpacity(0.3),
-            )),
-        Expanded(
-            child: Container(
-          width: double.infinity,
-          decoration: const BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(20.0),
-              topRight: Radius.circular(20.0),
-            ),
-          ),
-          child: Column(
-            children: [
-              const Icon(
-                Icons.error,
-                size: 48,
-              ),
-              Text(state.message),
-              ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                      elevation: 5,
-                      backgroundColor: Colors.transparent,
-                      shadowColor: Colors.transparent,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      alignment: Alignment.center,
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 24, vertical: 8)),
-                  onPressed: () {
-                    context.read<ContactsCubit>().getMyAllocatedContacts(id);
-                  },
-                  child: const Text('Reintentar'))
-            ],
-          ),
-        ))
-      ]);
-    } else if (state is ContactsStateCatchError) {
-      return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Container(
-            padding: const EdgeInsets.only(
-                top: 12.0, left: 14.0, right: 14.0, bottom: 22.0),
-            child: ListTile(
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20)),
-              title: const Text(
-                'N° Contactos',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                  fontSize: 16,
-                ),
-              ),
-              trailing: const Text(
-                '# - Error',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontStyle: FontStyle.italic,
-                  color: Colors.white,
-                  fontSize: 16,
-                ),
-              ),
-              tileColor: Colors.greenAccent.withOpacity(0.3),
-            )),
-        Expanded(
-            child: Container(
-          width: double.infinity,
-          decoration: const BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(20.0),
-              topRight: Radius.circular(20.0),
-            ),
-          ),
-          child: Column(
-            children: [
-              const Icon(
-                Icons.error,
-                size: 48,
-              ),
-              Text(state.message),
-              ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                      elevation: 5,
-                      backgroundColor: Colors.transparent,
-                      shadowColor: Colors.transparent,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      alignment: Alignment.center,
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 24, vertical: 8)),
-                  onPressed: () {
-                    context.read<ContactsCubit>().getMyAllocatedContacts(id);
-                  },
-                  child: const Text('Reintentar'))
+                  child: const Text('Reintentar',
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold)))
             ],
           ),
         ))
       ]);
     } else {
       return Container();
+    }
+  }
+
+  String _errorContactMessage(ContactsState state) {
+    if (state is ContactsStateErrorLoading) {
+      return state.message;
+    } else if (state is ContactsStateError) {
+      return state.message;
+    } else if (state is ContactsStateCatchError) {
+      return state.message;
+    } else {
+      return 'Error en aplicacion';
     }
   }
 
@@ -556,7 +485,10 @@ class MainMenuState extends State<MainMenuPage> {
               SizedBox(
                 height: 12,
               ),
-              Text('Buscando Perfil'),
+              Text(
+                'Buscando Perfil',
+                style: TextStyle(fontSize: 16),
+              ),
             ],
           ),
         ))
@@ -788,54 +720,98 @@ class MainMenuState extends State<MainMenuPage> {
               child: Card(
                 color: Colors.greenAccent.withOpacity(0.3),
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  child:Column(
-                  children: [
-                    ListTile(
-                      leading: const SizedBox(),
-                      minLeadingWidth: 0,
-                      title: const Text(
-                        'Saldo Actual:',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontStyle: FontStyle.italic,
-                          color: Colors.white,
-                          fontSize: 16,
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    child: Column(
+                      children: [
+                        ListTile(
+                            leading: const SizedBox(),
+                            minLeadingWidth: 0,
+                            title: const Text(
+                              'Saldo Actual:',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontStyle: FontStyle.italic,
+                                color: Colors.white,
+                                fontSize: 16,
+                              ),
+                            ),
+                            subtitle: Text(
+                              Helper.fixMoney(state.wallet.assigned),
+                              style: const TextStyle(
+                                fontSize: 32,
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            trailing: const Icon(
+                              Icons.monetization_on,
+                              color: Colors.white,
+                              size: 32,
+                            ) // Change for a Asset
+                            ),
+                        const Divider(
+                          height: 0,
+                          endIndent: 16,
+                          indent: 16,
                         ),
-                      ),
-                      subtitle: Text(
-                        Helper.fixMoney(state.wallet.assigned),
-                        style: const TextStyle(fontSize: 32, color: Colors.white, fontWeight: FontWeight.bold,),
-                      ),
-                      trailing: const Icon(Icons.monetization_on, color: Colors.white, size: 32,) // Change for a Asset
-                    ),
-                    const Divider(height: 0,endIndent: 16, indent: 16,),
-                    const SizedBox(height: 16,),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        const SizedBox(width: 32,),
-                      const Text('Utilizado',
-                        style: TextStyle(fontSize: 16,color: Colors.white, fontWeight: FontWeight.bold,),),
-                        const Spacer(),
-                        Text(Helper.fixMoney(state.wallet.used * -1),
-                            style: const TextStyle(fontSize: 16, color: Colors.white,)),
-                        const SizedBox(width: 32,),
-                    ],),
-                    const SizedBox(height: 16,),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        const SizedBox(width: 32,),
-                        const Text('Ultima Transaccion',
-                          style: TextStyle(fontSize: 16,color: Colors.white, fontWeight: FontWeight.bold,),),
-                        const Spacer(),
-                        Text(state.wallet.lastUpdated,
-                            style: const TextStyle(fontSize: 16, color: Colors.white,)),
-                        const SizedBox(width: 32,),
-                      ],),
-                  ],
-                )),
+                        const SizedBox(
+                          height: 16,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            const SizedBox(
+                              width: 32,
+                            ),
+                            const Text(
+                              'Utilizado',
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const Spacer(),
+                            Text(Helper.fixMoney(state.wallet.used * -1),
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.white,
+                                )),
+                            const SizedBox(
+                              width: 32,
+                            ),
+                          ],
+                        ),
+                        const SizedBox(
+                          height: 16,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            const SizedBox(
+                              width: 32,
+                            ),
+                            const Text(
+                              'Ultima Transaccion',
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const Spacer(),
+                            Text(state.wallet.lastUpdated,
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.white,
+                                )),
+                            const SizedBox(
+                              width: 32,
+                            ),
+                          ],
+                        ),
+                      ],
+                    )),
               )),
           Expanded(
             child: Container(
@@ -863,7 +839,9 @@ class MainMenuState extends State<MainMenuPage> {
                             return const Center(
                                 child: CustomCircularProgressBar());
                           }
-                          return BudgetTile(transaction: filteredBudget[index],);
+                          return BudgetTile(
+                            transaction: filteredBudget[index],
+                          );
                         })),
               ),
             ),

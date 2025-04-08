@@ -31,7 +31,7 @@ abstract class ColorPalette {
   static Color receiveMoney = Colors.green;
   static Color sendMoney = Colors.red;
 
-  static Color alert = Colors.yellow;
+  static Color alert = Colors.redAccent;
 
   static double elevationScaleNone = 0;
   static double elevationScaleS = 5;
