@@ -14,7 +14,8 @@ import '../../../../shared/presentation/widgets/dynamic_bottom_bar.dart';
 import '../../../../shared/presentation/widgets/floating_snack_bars.dart';
 import '../../data/datasource/remote/main_menu_datasource_impl.dart';
 import '../../domain/use_cases/budget/get_budget_use_case.dart';
-import '../../domain/use_cases/contacts/get_contacts_usecase.dart';
+import '../../domain/use_cases/contacts/delete_contacts_use_case.dart';
+import '../../domain/use_cases/contacts/get_contacts_use_case.dart';
 import '../../domain/use_cases/profile/get_profile_use_case.dart';
 import '../cubit/budget_cubit/budget_cubit.dart';
 import '../cubit/budget_cubit/budget_state.dart';
@@ -91,6 +92,8 @@ class MainMenuState extends State<MainMenuPage> {
         MainMenuRepositoryImpl(mainMenuRemoteDatasource);
     final GetContactsUseCase getContactsUseCase =
         GetContactsUseCase(mainMenuRepository);
+    final DeleteContactsUseCase deleteContactsUseCase =
+        DeleteContactsUseCase(mainMenuRepository);
     final GetProfileUseCase getProfileUseCase =
         GetProfileUseCase(mainMenuRepository);
     final GetBudgetUseCase getBudgetUseCase =
@@ -105,8 +108,9 @@ class MainMenuState extends State<MainMenuPage> {
           BlocProvider(
               create: (_) => ProfileCubit(getProfileUseCase)..getProfile(id)),
           BlocProvider(
-              create: (_) => ContactsCubit(getContactsUseCase)
-                ..getMyAllocatedContacts(id)),
+              create: (_) =>
+                  ContactsCubit(getContactsUseCase, deleteContactsUseCase)
+                    ..getMyAllocatedContacts(id)),
           BlocProvider(
             create: (_) =>
                 BudgetCubit(getBudgetUseCase)..getWalletAndHistory(id),
@@ -266,6 +270,12 @@ class MainMenuState extends State<MainMenuPage> {
                     }
                     return ContactTile(
                       securityContacts: filteredContacts[index],
+                      deleteFunction: () {
+                        context
+                            .read<ContactsCubit>()
+                            .deleteContact(filteredContacts, index, id);
+                        Navigator.of(context).pop();
+                      },
                     );
                   })),
         ),
@@ -519,11 +529,11 @@ class MainMenuState extends State<MainMenuPage> {
     if (state is BudgetStateInitial || state is BudgetStateLoading) {
       return const HeaderBudgetMetrics(
         body: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [CustomCircularProgressBar()],
-          ),
-        );
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [CustomCircularProgressBar()],
+        ),
+      );
     } else if (state is BudgetStateLoadedButEmpty) {
       return HeaderBudgetMetrics(
         assigned: state.wallet.assigned,
@@ -540,9 +550,9 @@ class MainMenuState extends State<MainMenuPage> {
             ShaderMask(
               blendMode: BlendMode.srcIn,
               shaderCallback: (Rect bounds) => LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: ColorPalette.alertGradient)
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: ColorPalette.alertGradient)
                   .createShader(bounds),
               child: const Icon(
                 Icons.error,
@@ -575,7 +585,7 @@ class MainMenuState extends State<MainMenuPage> {
                 },
                 child: const Text('Reintentar',
                     style:
-                    TextStyle(fontSize: 18, fontWeight: FontWeight.bold)))
+                        TextStyle(fontSize: 18, fontWeight: FontWeight.bold)))
           ],
         ),
       );
@@ -607,7 +617,9 @@ class MainMenuState extends State<MainMenuPage> {
                   })),
         ),
       );
-    } else if (state is BudgetStateTimeout || state is BudgetStateError || state is BudgetStateCatchError) {
+    } else if (state is BudgetStateTimeout ||
+        state is BudgetStateError ||
+        state is BudgetStateCatchError) {
       return HeaderBudgetMetrics(
         lastUpdate: undefinedCard,
         body: Column(
@@ -621,9 +633,9 @@ class MainMenuState extends State<MainMenuPage> {
             ShaderMask(
               blendMode: BlendMode.srcIn,
               shaderCallback: (Rect bounds) => LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: ColorPalette.alertGradient)
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: ColorPalette.alertGradient)
                   .createShader(bounds),
               child: const Icon(
                 Icons.error,
@@ -656,7 +668,7 @@ class MainMenuState extends State<MainMenuPage> {
                 },
                 child: const Text('Reintentar',
                     style:
-                    TextStyle(fontSize: 18, fontWeight: FontWeight.bold)))
+                        TextStyle(fontSize: 18, fontWeight: FontWeight.bold)))
           ],
         ),
       );

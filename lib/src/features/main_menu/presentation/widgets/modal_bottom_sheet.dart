@@ -1,13 +1,15 @@
 import 'package:drive_on/src/core/utils/constants/app_constants.dart';
 import 'package:drive_on/src/features/main_menu/data/entities/security_contacts.dart';
 import 'package:drive_on/src/features/main_menu/data/entities/transaction.dart';
+import 'package:drive_on/src/shared/presentation/widgets/floating_snack_bars.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../core/config/styles/static_colors.dart';
 import '../../../../core/helpers/helpers.dart';
 
 class ModalBottomSheetContact {
-  static void show(BuildContext context, SecurityContacts contacts) {
+  static void show(BuildContext context, SecurityContacts contacts,
+      VoidCallback deleteFunction) {
     showModalBottomSheet<void>(
         context: context,
         useSafeArea: true,
@@ -51,7 +53,7 @@ class ModalBottomSheetContact {
                         child: ListTile(
                           title: const Text('Vinculo personal'),
                           subtitle: Text(contacts.relationship ?? 'Ninguno'),
-                          trailing: const Icon(Icons.people),
+                          trailing: const Icon(Icons.family_restroom),
                         ),
                       ),
                     ),
@@ -69,14 +71,15 @@ class ModalBottomSheetContact {
                             children: [
                               ElevatedButton(
                                 onPressed: () {
-                                  print('editar');
+                                  FloatingSnackBar.show(
+                                      context, 'Proximamente');
                                 },
                                 style: ElevatedButton.styleFrom(
                                   shape: const CircleBorder(),
                                   padding: const EdgeInsets.all(20),
                                   //backgroundColor: Colors.blue, // <-- Button color
-                                  foregroundColor:
-                                      Colors.red, // <-- Splash color
+                                  foregroundColor: ColorPalette
+                                      .shareContact, // <-- Splash color
                                 ),
                                 child: const Icon(Icons.share),
                               ),
@@ -97,8 +100,8 @@ class ModalBottomSheetContact {
                                   shape: const CircleBorder(),
                                   padding: const EdgeInsets.all(20),
                                   //backgroundColor: Colors.blue, // <-- Button color
-                                  foregroundColor:
-                                      Colors.red, // <-- Splash color
+                                  foregroundColor: ColorPalette
+                                      .editContact, // <-- Splash color
                                 ),
                                 child: const Icon(Icons.edit),
                               ),
@@ -112,15 +115,13 @@ class ModalBottomSheetContact {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               ElevatedButton(
-                                onPressed: () {
-                                  print('editar');
-                                },
+                                onPressed: deleteFunction,
                                 style: ElevatedButton.styleFrom(
                                   shape: const CircleBorder(),
                                   padding: const EdgeInsets.all(20),
                                   //backgroundColor: Colors.blue, // <-- Button color
-                                  foregroundColor:
-                                      Colors.red, // <-- Splash color
+                                  foregroundColor: ColorPalette
+                                      .deleteContact, // <-- Splash color
                                 ),
                                 child: const Icon(Icons.delete),
                               ),

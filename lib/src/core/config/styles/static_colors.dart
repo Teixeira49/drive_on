@@ -30,6 +30,10 @@ abstract class ColorPalette {
   static Color receiveMoney = Colors.green;
   static Color sendMoney = Colors.red;
 
+  static Color shareContact = Colors.green;
+  static Color editContact = Colors.orangeAccent;
+  static Color deleteContact = Colors.redAccent;
+
   static List<Color> alertGradient = [
     Colors.red,
     Colors.orangeAccent,
