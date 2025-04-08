@@ -1,7 +1,12 @@
+import 'package:drive_on/src/core/utils/constants/app_constants.dart';
 import 'package:drive_on/src/features/main_menu/data/entities/security_contacts.dart';
+import 'package:drive_on/src/features/main_menu/data/entities/transaction.dart';
 import 'package:flutter/material.dart';
 
-class ModalBottomSheet {
+import '../../../../core/config/styles/static_colors.dart';
+import '../../../../core/helpers/helpers.dart';
+
+class ModalBottomSheetContact {
   static void show(BuildContext context, SecurityContacts contacts) {
     showModalBottomSheet<void>(
         context: context,
@@ -18,7 +23,8 @@ class ModalBottomSheet {
                       padding: EdgeInsets.only(bottom: 12),
                       child: Text(
                         'Informacion del contacto',
-                        style: TextStyle(fontSize: 18),
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold),
                       ),
                     ),
                     const Divider(),
@@ -127,6 +133,83 @@ class ModalBottomSheet {
                         ],
                       ),
                     ),
+                  ])));
+        });
+  }
+}
+
+class ModalBottomSheetTransaction {
+  static void show(BuildContext context, Transaction transaction) {
+    showModalBottomSheet<void>(
+        context: context,
+        useSafeArea: true,
+        builder: (context) {
+          return Container(
+              margin: const EdgeInsets.all(24),
+              child: SingleChildScrollView(
+                  child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                    const Padding(
+                      padding: EdgeInsets.only(bottom: 6),
+                      child: Text(
+                        'Detalles de Transaccion',
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 12),
+                      child: Text(
+                        transaction.date,
+                        style: const TextStyle(fontSize: 14),
+                      ),
+                    ),
+                    const Divider(),
+                    ListTile(
+                      title: const Text(
+                        'Beneficiario',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      subtitle: Text(
+                        transaction.forT == youTarget
+                            ? 'Usuario'
+                            : transaction.forT,
+                        style: const TextStyle(fontSize: 18),
+                      ),
+                      trailing: const Icon(Icons.arrow_upward),
+                    ),
+                    ListTile(
+                      title: const Text(
+                        'Ordenante',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      subtitle: Text(
+                        transaction.byT == youTarget
+                            ? 'Usuario'
+                            : transaction.byT,
+                        style: const TextStyle(fontSize: 18),
+                      ),
+                      trailing: const Icon(Icons.arrow_downward),
+                    ),
+                    ListTile(
+                      title: const Text(
+                        'Saldo Transferido',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      subtitle: Text(
+                        Helper.fixMoney(transaction.operation),
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18,
+                            color: transaction.operation >= 0
+                                ? ColorPalette.receiveMoney
+                                : ColorPalette.sendMoney),
+                      ),
+                      trailing: const Icon(Icons.paid),
+                    ),
+                    const Divider(),
                   ])));
         });
   }

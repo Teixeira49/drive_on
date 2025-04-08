@@ -1,3 +1,4 @@
+import '../../../../../core/helpers/helpers.dart';
 import '../../../data/entities/transaction.dart';
 
 class TransactionModel extends Transaction {
@@ -10,7 +11,7 @@ class TransactionModel extends Transaction {
 
   factory TransactionModel.fromJson(json) {
     return TransactionModel(
-      operation: json['operation'],
+      operation: Helper.checkDouble(json['operation']),
       date: json['date'],
       byT: json['by'],
       forT: json['for'],

@@ -1,3 +1,4 @@
+import '../../../../../core/helpers/helpers.dart';
 import '../../../data/entities/budget_wallet.dart';
 
 class BudgetModel extends BudgetWallet {
@@ -13,8 +14,8 @@ class BudgetModel extends BudgetWallet {
     return BudgetModel(
       userId: json['userId'],
       department: json['department'],
-      assigned: json['assigned'],
-      used: json['used'],
+      assigned: Helper.checkDouble(json['assigned']),
+      used: Helper.checkDouble(json['used']),
       lastUpdated: json['lastUpdated'],
     );
   }

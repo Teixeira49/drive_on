@@ -91,7 +91,7 @@ class MyLoginPageState extends State<LoginPage> {
                     gradient: LinearGradient(
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
-                        colors: ColorPalette.authGradient)),
+                        colors: ColorPalette.authGradientLight)),
                 child: Scaffold(
                     backgroundColor: Colors.transparent,
                     body: Center(

@@ -7,6 +7,12 @@ class BudgetStateInitial extends BudgetState {}
 
 class BudgetStateLoading extends BudgetState {}
 
+class BudgetStateLoadedButEmpty extends BudgetState {
+  final String message;
+
+  BudgetStateLoadedButEmpty({required this.message});
+}
+
 class BudgetStateLoaded extends BudgetState {
   final BudgetWallet wallet;
   final List<Transaction> history;
