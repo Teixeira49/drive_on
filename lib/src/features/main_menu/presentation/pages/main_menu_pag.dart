@@ -785,26 +785,57 @@ class MainMenuState extends State<MainMenuPage> {
           Container(
               padding: const EdgeInsets.only(
                   top: 12.0, left: 14.0, right: 14.0, bottom: 22.0),
-              child: ListTile(
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20)),
-                title: const Text(
-                  'N° Contactos',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                    fontSize: 16,
-                  ),
-                ),
-                trailing: Text(
-                  '${state.wallet.assigned}',
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                    fontSize: 16,
-                  ),
-                ),
-                tileColor: Colors.greenAccent.withOpacity(0.3),
+              child: Card(
+                color: Colors.greenAccent.withOpacity(0.3),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  child:Column(
+                  children: [
+                    ListTile(
+                      leading: const SizedBox(),
+                      minLeadingWidth: 0,
+                      title: const Text(
+                        'Saldo Actual:',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontStyle: FontStyle.italic,
+                          color: Colors.white,
+                          fontSize: 16,
+                        ),
+                      ),
+                      subtitle: Text(
+                        Helper.fixMoney(state.wallet.assigned),
+                        style: const TextStyle(fontSize: 32, color: Colors.white, fontWeight: FontWeight.bold,),
+                      ),
+                      trailing: const Icon(Icons.monetization_on, color: Colors.white, size: 32,) // Change for a Asset
+                    ),
+                    const Divider(height: 0,endIndent: 16, indent: 16,),
+                    const SizedBox(height: 16,),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        const SizedBox(width: 32,),
+                      const Text('Utilizado',
+                        style: TextStyle(fontSize: 16,color: Colors.white, fontWeight: FontWeight.bold,),),
+                        const Spacer(),
+                        Text(Helper.fixMoney(state.wallet.used * -1),
+                            style: const TextStyle(fontSize: 16, color: Colors.white,)),
+                        const SizedBox(width: 32,),
+                    ],),
+                    const SizedBox(height: 16,),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        const SizedBox(width: 32,),
+                        const Text('Ultima Transaccion',
+                          style: TextStyle(fontSize: 16,color: Colors.white, fontWeight: FontWeight.bold,),),
+                        const Spacer(),
+                        Text(state.wallet.lastUpdated,
+                            style: const TextStyle(fontSize: 16, color: Colors.white,)),
+                        const SizedBox(width: 32,),
+                      ],),
+                  ],
+                )),
               )),
           Expanded(
             child: Container(

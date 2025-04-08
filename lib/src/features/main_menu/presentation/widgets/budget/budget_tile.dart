@@ -18,12 +18,15 @@ class BudgetTile extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           ListTile(
-            leading: Icon(Icons.attach_money,),
-            title: Text(transaction.byT == youTarget
-                ? transaction.forT
-                : transaction.byT, style: TextStyle(
-              fontWeight: FontWeight.bold,
-            ),),
+            leading: const Icon(
+              Icons.attach_money,
+            ),
+            title: Text(
+              transaction.byT == youTarget ? transaction.forT : transaction.byT,
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
             subtitle: Text(Helper.extractDate(transaction.date)[0]),
             trailing: Text(
               Helper.fixMoney(transaction.operation),
@@ -38,7 +41,11 @@ class BudgetTile extends StatelessWidget {
               ModalBottomSheetTransaction.show(context, transaction);
             },
           ),
-          const Divider(height: 3, indent: 12, endIndent: 12,)
+          const Divider(
+            height: 3,
+            indent: 12,
+            endIndent: 12,
+          )
         ]);
   }
 }
