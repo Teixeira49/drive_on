@@ -3,7 +3,7 @@ import 'package:drive_on/src/features/main_menu/domain/use_cases/contacts/get_co
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../core/utils/constants/error_constants.dart';
-import '../../../data/entities/security_contacts.dart';
+import '../../../../../shared/data/entities/security_contacts.dart';
 import '../../../domain/models/contacts/security_contacts_delete_params.dart';
 import '../../../domain/models/contacts/security_contacts_get_params.dart';
 import 'contacts_state.dart';

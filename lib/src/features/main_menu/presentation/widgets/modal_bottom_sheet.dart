@@ -1,5 +1,5 @@
 import 'package:drive_on/src/core/utils/constants/app_constants.dart';
-import 'package:drive_on/src/features/main_menu/data/entities/security_contacts.dart';
+import 'package:drive_on/src/shared/data/entities/security_contacts.dart';
 import 'package:drive_on/src/features/main_menu/data/entities/transaction.dart';
 import 'package:drive_on/src/shared/presentation/widgets/floating_snack_bars.dart';
 import 'package:flutter/material.dart';
@@ -71,6 +71,7 @@ class ModalBottomSheetContact {
                             children: [
                               ElevatedButton(
                                 onPressed: () {
+                                  Navigator.of(context).pop();
                                   FloatingSnackBar.show(
                                       context, 'Proximamente');
                                 },

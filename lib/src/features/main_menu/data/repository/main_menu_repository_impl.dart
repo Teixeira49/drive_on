@@ -11,7 +11,7 @@ import '../../domain/models/profile/profile_user_params.dart';
 import '../../domain/models/contacts/security_contacts_get_params.dart';
 import '../../domain/repository/main_menu_repository_abst.dart';
 import '../datasource/remote/main_menu_datasource_abst.dart';
-import '../entities/security_contacts.dart';
+import '../../../../shared/data/entities/security_contacts.dart';
 
 class MainMenuRepositoryImpl extends MainMenuRepository {
 

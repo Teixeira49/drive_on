@@ -12,9 +12,9 @@ import '../../../domain/models/budget/budget_model.dart';
 import '../../../domain/models/budget/budget_transaction_dto.dart';
 import '../../../domain/models/profile/profile_user_model.dart';
 import '../../../domain/models/profile/profile_user_params.dart';
-import '../../../domain/models/contacts/security_contacts_model.dart';
+import '../../../../../shared/domain/models/security_contacts_model.dart';
 import '../../../domain/models/contacts/security_contacts_get_params.dart';
-import '../../entities/security_contacts.dart';
+import '../../../../../shared/data/entities/security_contacts.dart';
 import 'main_menu_datasource_abst.dart';
 
 class MainMenuRemoteDatasourceImpl implements MainMenuRemoteDatasource {

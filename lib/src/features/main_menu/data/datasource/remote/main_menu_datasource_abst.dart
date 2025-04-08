@@ -5,7 +5,7 @@ import '../../../domain/models/budget/budget_transaction_dto.dart';
 import '../../../domain/models/contacts/security_contacts_delete_params.dart';
 import '../../../domain/models/profile/profile_user_params.dart';
 import '../../../domain/models/contacts/security_contacts_get_params.dart';
-import '../../entities/security_contacts.dart';
+import '../../../../../shared/data/entities/security_contacts.dart';
 
 abstract class MainMenuRemoteDatasource {
   Future<List<SecurityContacts>> getListSecurityContacts(
