@@ -24,7 +24,7 @@ class HeaderImg extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 12),
+      margin: const EdgeInsets.only(bottom: 4),
       child: const CircleAvatar(
         radius: 45.0,
         backgroundColor: Colors.blue,

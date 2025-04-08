@@ -7,6 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/config/styles/static_colors.dart';
 import '../../../../core/helpers/helpers.dart';
 import '../../../../core/utils/constants/app_constants.dart';
+import '../../../../core/utils/constants/error_constants.dart';
 import '../../../../shared/presentation/cubit/user_cubit/user_cubit.dart';
 import '../../../../shared/presentation/widgets/custom_progress_indicator.dart';
 import '../../../../shared/presentation/widgets/dynamic_bottom_bar.dart';
@@ -22,10 +23,13 @@ import '../cubit/contacts_cubit/contacts_state.dart';
 import '../cubit/profile_cubit/profile_cubit.dart';
 import '../cubit/profile_cubit/profile_state.dart';
 import '../widgets/budget/budget_tile.dart';
+import '../widgets/budget/header_budget_metrics.dart';
 import '../widgets/contacts/contact_tile.dart';
-import '../widgets/contacts/header_profile.dart';
+import '../widgets/contacts/header_contacts_metrics.dart';
+import '../widgets/profile/header_profile.dart';
 import '../widgets/gradient_floating_action_button.dart';
 import '../widgets/popup_menu.dart';
+import '../widgets/profile/header_profile_metrics.dart';
 import '../widgets/profile/profile_tile.dart';
 
 class MainMenuPage extends StatefulWidget {
@@ -170,277 +174,154 @@ class MainMenuState extends State<MainMenuPage> {
 
   Widget _contactList(ContactsState state, BuildContext context, int id) {
     if (state is ContactsStateInitial || state is ContactsStateLoading) {
-      return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Container(
-            padding: const EdgeInsets.only(
-                top: 12.0, left: 14.0, right: 14.0, bottom: 22.0),
-            child: ListTile(
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20)),
-              title: const Text(
-                'Buscando casos',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                  fontSize: 16,
-                ),
-              ),
-              tileColor: Colors.greenAccent.withOpacity(0.3),
-            )),
-        Expanded(
-            child: Container(
-          alignment: Alignment.center,
-          decoration: const BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(20.0),
-              topRight: Radius.circular(20.0),
+      return const HeaderContactMetrics(
+        contactsNum: emptyString,
+        body: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            CustomCircularProgressBar(),
+            SizedBox(
+              height: 12,
             ),
-          ),
-          child: const Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              CustomCircularProgressBar(),
-              SizedBox(
-                height: 12,
-              ),
-              Text(
-                'Buscando Perfil',
-                style: TextStyle(fontSize: 16),
-              ),
-            ],
-          ),
-        ))
-      ]);
+            Text(
+              'Descargando informacion',
+              style: TextStyle(fontSize: 16),
+            ),
+          ],
+        ),
+      );
     } else if (state is ContactsStateLoadedButEmpty) {
-      return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Container(
-            padding: const EdgeInsets.only(
-                top: 12.0, left: 14.0, right: 14.0, bottom: 22.0),
-            child: ListTile(
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20)),
-              title: const Text(
-                'N° Contactos',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                  fontSize: 16,
-                ),
-              ),
-              trailing: const Text(
-                '0',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                  fontSize: 16,
-                ),
-              ),
-              tileColor: Colors.greenAccent.withOpacity(0.3),
-            )),
-        Expanded(
-            child: Container(
-          width: double.infinity,
-          decoration: const BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(20.0),
-              topRight: Radius.circular(20.0),
+      return HeaderContactMetrics(
+        contactsNum: '0',
+        body: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisSize: MainAxisSize.max,
+          children: [
+            const SizedBox(
+              height: 128,
             ),
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              const SizedBox(
-                height: 128,
-              ),
-              Icon(
+            ShaderMask(
+              blendMode: BlendMode.srcIn,
+              shaderCallback: (Rect bounds) => LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: ColorPalette.alertGradient)
+                  .createShader(bounds),
+              child: const Icon(
                 Icons.error,
                 size: 72,
-                color: ColorPalette.alert,
-              ),
-              const SizedBox(
-                height: 16,
-              ),
-              Text(
-                state.message,
-                style:
-                    const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(
-                height: 102,
-              ),
-              ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                      elevation: 5,
-                      backgroundColor: Colors.transparent,
-                      shadowColor: Colors.transparent,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      alignment: Alignment.center,
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 24, vertical: 8)),
-                  onPressed: () {
-                    context.read<ContactsCubit>().getMyAllocatedContacts(id);
-                  },
-                  child: const Text('Reintentar',
-                      style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold)))
-            ],
-          ),
-        ))
-      ]);
-    } else if (state is ContactsStateLoaded) {
-      final filteredContacts = state.securityContacts;
-      //.where((element) => element.name.toLowerCase().contains(state));
-
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-              padding: const EdgeInsets.only(
-                  top: 12.0, left: 14.0, right: 14.0, bottom: 22.0),
-              child: ListTile(
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20)),
-                title: const Text(
-                  'N° Contactos',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                    fontSize: 16,
-                  ),
-                ),
-                trailing: Text(
-                  '${filteredContacts.length}',
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                    fontSize: 16,
-                  ),
-                ),
-                tileColor: Colors.greenAccent.withOpacity(0.3),
-              )),
-          Expanded(
-            child: Container(
-              width: double.infinity,
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(20.0),
-                  topRight: Radius.circular(20.0),
-                ),
-              ),
-              child: RefreshIndicator(
-                onRefresh: () async {
-                  context.read<ContactsCubit>().getMyAllocatedContacts(id);
-                },
-                child: Scrollbar(
-                    controller: _scrollController,
-                    radius: const Radius.circular(45),
-                    child: ListView.builder(
-                        //padding: ,
-                        controller: _scrollController,
-                        itemCount: filteredContacts.length,
-                        itemBuilder: (context, index) {
-                          if (index >= state.securityContacts.length) {
-                            return const Center(
-                                child: CustomCircularProgressBar());
-                          }
-                          return ContactTile(
-                            securityContacts: filteredContacts[index],
-                          );
-                        })),
               ),
             ),
-          )
-        ],
+            const SizedBox(
+              height: 16,
+            ),
+            Text(
+              state.message,
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(
+              height: 102,
+            ),
+            ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                    elevation: 5,
+                    backgroundColor: Colors.transparent,
+                    shadowColor: Colors.transparent,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    alignment: Alignment.center,
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 24, vertical: 8)),
+                onPressed: () {
+                  context.read<ContactsCubit>().getMyAllocatedContacts(id);
+                },
+                child: const Text('Reintentar',
+                    style:
+                        TextStyle(fontSize: 18, fontWeight: FontWeight.bold)))
+          ],
+        ),
+      );
+    } else if (state is ContactsStateLoaded) {
+      final filteredContacts = state
+          .securityContacts; //.where((element) => element.name.toLowerCase().contains(state));
+      return HeaderContactMetrics(
+        contactsNum: '${filteredContacts.length}',
+        body: RefreshIndicator(
+          onRefresh: () async {
+            context.read<ContactsCubit>().getMyAllocatedContacts(id);
+          },
+          child: Scrollbar(
+              controller: _scrollController,
+              radius: const Radius.circular(45),
+              child: ListView.builder(
+                  //padding: ,
+                  controller: _scrollController,
+                  itemCount: filteredContacts.length,
+                  itemBuilder: (context, index) {
+                    if (index >= state.securityContacts.length) {
+                      return const Center(child: CustomCircularProgressBar());
+                    }
+                    return ContactTile(
+                      securityContacts: filteredContacts[index],
+                    );
+                  })),
+        ),
       );
     } else if (state is ContactsStateErrorLoading ||
         state is ContactsStateError ||
         state is ContactsStateCatchError) {
-      return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Container(
-            padding: const EdgeInsets.only(
-                top: 12.0, left: 14.0, right: 14.0, bottom: 22.0),
-            child: ListTile(
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20)),
-              title: const Text(
-                'N° Contactos',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                  fontSize: 16,
-                ),
-              ),
-              trailing: const Text(
-                '# - Error',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontStyle: FontStyle.italic,
-                  color: Colors.white,
-                  fontSize: 16,
-                ),
-              ),
-              tileColor: Colors.greenAccent.withOpacity(0.3),
-            )),
-        Expanded(
-            child: Container(
-          width: double.infinity,
-          decoration: const BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(20.0),
-              topRight: Radius.circular(20.0),
+      return HeaderContactMetrics(
+        contactsNum: undefinedAmount,
+        body: Column(
+          children: [
+            const SizedBox(
+              height: 128,
             ),
-          ),
-          child: Column(
-            children: [
-              const SizedBox(
-                height: 128,
-              ),
-              Icon(
+            ShaderMask(
+              blendMode: BlendMode.srcIn,
+              shaderCallback: (Rect bounds) => LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: ColorPalette.alertGradient)
+                  .createShader(bounds),
+              child: const Icon(
                 Icons.error,
                 size: 72,
-                color: ColorPalette.alert,
               ),
-              const SizedBox(
-                height: 16,
-              ),
-              Text(
-                _errorContactMessage(state),
-                style:
-                    const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(
-                height: 102,
-              ),
-              ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                      elevation: 5,
-                      backgroundColor: Colors.transparent,
-                      shadowColor: Colors.transparent,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      alignment: Alignment.center,
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 24, vertical: 8)),
-                  onPressed: () {
-                    context.read<ContactsCubit>().getMyAllocatedContacts(id);
-                  },
-                  child: const Text('Reintentar',
-                      style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold)))
-            ],
-          ),
-        ))
-      ]);
+            ),
+            const SizedBox(
+              height: 16,
+            ),
+            Text(
+              _errorContactMessage(state),
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(
+              height: 102,
+            ),
+            ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                    elevation: 5,
+                    backgroundColor: Colors.transparent,
+                    shadowColor: Colors.transparent,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    alignment: Alignment.center,
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 24, vertical: 8)),
+                onPressed: () {
+                  context.read<ContactsCubit>().getMyAllocatedContacts(id);
+                },
+                child: const Text('Reintentar',
+                    style:
+                        TextStyle(fontSize: 18, fontWeight: FontWeight.bold)))
+          ],
+        ),
+      );
     } else {
       return Container();
     }
@@ -460,522 +341,341 @@ class MainMenuState extends State<MainMenuPage> {
 
   Widget _profileBody(ProfileState state, BuildContext context, int id) {
     if (state is ProfileStateInitial || state is ProfileStateLoading) {
-      return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Container(
-          padding: const EdgeInsets.only(
-            top: 8.0,
-          ),
-        ),
-        Expanded(
-            child: Container(
-          width: double.infinity,
-          alignment: Alignment.center,
-          decoration: const BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(20.0),
-              topRight: Radius.circular(20.0),
+      return const HeaderProfileMetrics(
+        body: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            CustomCircularProgressBar(),
+            SizedBox(
+              height: 12,
             ),
-          ),
-          child: const Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              CustomCircularProgressBar(),
-              SizedBox(
-                height: 12,
-              ),
-              Text(
-                'Buscando Perfil',
-                style: TextStyle(fontSize: 16),
-              ),
-            ],
-          ),
-        ))
-      ]);
+            Text(
+              'Buscando Perfil',
+              style: TextStyle(fontSize: 16),
+            ),
+          ],
+        ),
+      );
     } else if (state is ProfileStateLoaded) {
-      return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Container(
-          padding: const EdgeInsets.only(
-            top: 8.0,
-          ),
-        ),
-        Expanded(
-            child: Container(
-          alignment: Alignment.center,
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          decoration: const BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(20.0),
-              topRight: Radius.circular(20.0),
-            ),
-          ),
-          child: RefreshIndicator(
-              onRefresh: () async {
-                context.read<ProfileCubit>().getProfile(id);
-              },
-              child: SingleChildScrollView(
+      return HeaderProfileMetrics(
+        body: RefreshIndicator(
+            onRefresh: () async {
+              context.read<ProfileCubit>().getProfile(id);
+            },
+            child: SingleChildScrollView(
+                child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                const HeaderImg(),
+                HeaderName(name: state.user.userName),
+                const SizedBox(
+                  height: 6,
+                ),
+                Card(
+                  elevation: 5,
                   child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                mainAxisSize: MainAxisSize.max,
-                children: [
-                  const HeaderImg(),
-                  HeaderName(name: state.user.userName),
-                  const SizedBox(
-                    height: 6,
+                    children: [
+                      ProfileTile(
+                        userRow: state.user.userEmail,
+                        keyRow: 'Correo',
+                        iconData: Icons.email,
+                      ),
+                      const TileDivisor(),
+                      ProfileTile(
+                        userRow: state.user.userType,
+                        keyRow: 'Plan',
+                        iconData: Icons.wallet,
+                      ),
+                      Visibility(
+                        visible: state.user.userType == typeCorporate,
+                        child: const TileDivisor(),
+                      ),
+                      Visibility(
+                        visible: state.user.userType == typeCorporate,
+                        child: ProfileTile(
+                          userRow:
+                              Helper.upper(state.user.userDepartment ?? ''),
+                          keyRow: 'Departamento',
+                          iconData: Icons.factory,
+                        ),
+                      ),
+                      const TileDivisor(),
+                      ProfileTile(
+                        userRow: '${state.user.userId}',
+                        keyRow: 'Id Usuario',
+                        iconData: Icons.verified_user,
+                      ),
+                    ],
                   ),
-                  Card(
+                ),
+                const SizedBox(
+                  height: 12,
+                ),
+                Card(
+                  elevation: 5,
+                  child: Column(
+                    children: [
+                      ProfileTileButton(
+                          keyRow: 'Editar Perfil',
+                          iconData: Icons.edit,
+                          function: () {
+                            Future.delayed(const Duration(seconds: 100), () {
+                              FloatingSnackBar.show(context, "Proximamente");
+                            });
+                          }),
+                      const TileDivisor(),
+                      ProfileTileButton(
+                          keyRow: 'Cambiar plan',
+                          iconData: Icons.file_upload,
+                          function: () {
+                            Future.delayed(const Duration(seconds: 100), () {
+                              FloatingSnackBar.show(context, "Proximamente");
+                            });
+                          }),
+                      const TileDivisor(),
+                      ProfileTileButton(
+                          keyRow: 'Cerrar Sesion',
+                          iconData: Icons.logout,
+                          function: () {
+                            Navigator.of(context).pop();
+                          }),
+                    ],
+                  ),
+                ),
+              ],
+            ))),
+      );
+    } else if (state is ProfileStateTimeout ||
+        state is ProfileStateError ||
+        state is ProfileStateCatchError) {
+      return HeaderProfileMetrics(
+        body: Column(
+          children: [
+            const SizedBox(
+              height: 128,
+            ),
+            ShaderMask(
+              blendMode: BlendMode.srcIn,
+              shaderCallback: (Rect bounds) => LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: ColorPalette.alertGradient)
+                  .createShader(bounds),
+              child: const Icon(
+                Icons.error,
+                size: 72,
+              ),
+            ),
+            const SizedBox(
+              height: 16,
+            ),
+            Text(
+              _errorProfileMessage(state),
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(
+              height: 102,
+            ),
+            ElevatedButton(
+                style: ElevatedButton.styleFrom(
                     elevation: 5,
-                    child: Column(
-                      children: [
-                        ProfileTile(
-                          userRow: state.user.userEmail,
-                          keyRow: 'Correo',
-                          iconData: Icons.email,
-                        ),
-                        const TileDivisor(),
-                        ProfileTile(
-                          userRow: state.user.userType,
-                          keyRow: 'Plan',
-                          iconData: Icons.wallet,
-                        ),
-                        Visibility(
-                          visible: state.user.userType == typeCorporate,
-                          child: const TileDivisor(),
-                        ),
-                        Visibility(
-                          visible: state.user.userType == typeCorporate,
-                          child: ProfileTile(
-                            userRow:
-                                Helper.upper(state.user.userDepartment ?? ''),
-                            keyRow: 'Departamento',
-                            iconData: Icons.factory,
-                          ),
-                        ),
-                        const TileDivisor(),
-                        ProfileTile(
-                          userRow: '${state.user.userId}',
-                          keyRow: 'Id Usuario',
-                          iconData: Icons.verified_user,
-                        ),
-                      ],
+                    backgroundColor: Colors.transparent,
+                    shadowColor: Colors.transparent,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
                     ),
-                  ),
-                  const SizedBox(
-                    height: 12,
-                  ),
-                  Card(
-                    elevation: 5,
-                    child: Column(
-                      children: [
-                        ProfileTileButton(
-                            keyRow: 'Editar Perfil',
-                            iconData: Icons.edit,
-                            function: () {
-                              Future.delayed(const Duration(seconds: 100), () {
-                                FloatingSnackBar.show(context, "Proximamente");
-                              });
-                            }),
-                        const TileDivisor(),
-                        ProfileTileButton(
-                            keyRow: 'Cambiar plan',
-                            iconData: Icons.file_upload,
-                            function: () {
-                              Future.delayed(const Duration(seconds: 100), () {
-                                FloatingSnackBar.show(context, "Proximamente");
-                              });
-                            }),
-                        const TileDivisor(),
-                        ProfileTileButton(
-                            keyRow: 'Cerrar Sesion',
-                            iconData: Icons.logout,
-                            function: () {
-                              Navigator.of(context).pop();
-                            }),
-                      ],
-                    ),
-                  ),
-                ],
-              ))),
-        ))
-      ]);
+                    alignment: Alignment.center,
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 24, vertical: 8)),
+                onPressed: () {
+                  context.read<ProfileCubit>().getProfile(id);
+                },
+                child: const Text('Reintentar',
+                    style:
+                        TextStyle(fontSize: 18, fontWeight: FontWeight.bold)))
+          ],
+        ),
+      );
     } else {
       return Container();
     }
   }
 
+  String _errorProfileMessage(ProfileState state) {
+    if (state is ProfileStateTimeout) {
+      return state.sms;
+    } else if (state is ProfileStateError) {
+      return state.sms;
+    } else if (state is ProfileStateCatchError) {
+      return state.sms;
+    } else {
+      return 'Error en aplicacion';
+    }
+  }
+
   Widget _walletBody(BudgetState state, BuildContext context, int id) {
     if (state is BudgetStateInitial || state is BudgetStateLoading) {
-      return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Container(
-            padding: const EdgeInsets.only(
-                top: 12.0, left: 14.0, right: 14.0, bottom: 22.0),
-            child: ListTile(
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20)),
-              title: const Text(
-                'Buscando casos',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                  fontSize: 16,
-                ),
-              ),
-              tileColor: Colors.greenAccent.withOpacity(0.3),
-            )),
-        Expanded(
-            child: Container(
-          width: double.infinity,
-          alignment: Alignment.center,
-          decoration: const BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(20.0),
-              topRight: Radius.circular(20.0),
-            ),
-          ),
-          child: const Column(
+      return const HeaderBudgetMetrics(
+        body: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [CustomCircularProgressBar()],
           ),
-        ))
-      ]);
+        );
     } else if (state is BudgetStateLoadedButEmpty) {
-      return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Container(
-            padding: const EdgeInsets.only(
-                top: 12.0, left: 14.0, right: 14.0, bottom: 22.0),
-            child: ListTile(
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20)),
-              title: const Text(
-                'N° Contactos',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                  fontSize: 16,
-                ),
-              ),
-              trailing: const Text(
-                '0',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                  fontSize: 16,
-                ),
-              ),
-              tileColor: Colors.greenAccent.withOpacity(0.3),
-            )),
-        Expanded(
-            child: Container(
-          width: double.infinity,
-          decoration: const BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(20.0),
-              topRight: Radius.circular(20.0),
+      return HeaderBudgetMetrics(
+        assigned: state.wallet.assigned,
+        used: state.wallet.used,
+        lastUpdate: state.wallet.lastUpdated,
+        body: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisSize: MainAxisSize.max,
+          children: [
+            const SizedBox(
+              height: 128,
             ),
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              const Icon(
+            ShaderMask(
+              blendMode: BlendMode.srcIn,
+              shaderCallback: (Rect bounds) => LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: ColorPalette.alertGradient)
+                  .createShader(bounds),
+              child: const Icon(
                 Icons.error,
-                size: 48,
+                size: 72,
               ),
-              Text(state.message),
-              ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                      elevation: 5,
-                      backgroundColor: Colors.transparent,
-                      shadowColor: Colors.transparent,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      alignment: Alignment.center,
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 24, vertical: 8)),
-                  onPressed: () {
-                    context.read<BudgetCubit>().getWalletAndHistory(id);
-                  },
-                  child: const Text('Reintentar'))
-            ],
-          ),
-        ))
-      ]);
-    } else if (state is BudgetStateLoaded) {
-      final filteredBudget = state.history;
-      //.where((element) => element.name.toLowerCase().contains(state));
-
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-              padding: const EdgeInsets.only(
-                  top: 12.0, left: 14.0, right: 14.0, bottom: 22.0),
-              child: Card(
-                color: Colors.greenAccent.withOpacity(0.3),
-                child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                    child: Column(
-                      children: [
-                        ListTile(
-                            leading: const SizedBox(),
-                            minLeadingWidth: 0,
-                            title: const Text(
-                              'Saldo Actual:',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontStyle: FontStyle.italic,
-                                color: Colors.white,
-                                fontSize: 16,
-                              ),
-                            ),
-                            subtitle: Text(
-                              Helper.fixMoney(state.wallet.assigned),
-                              style: const TextStyle(
-                                fontSize: 32,
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            trailing: const Icon(
-                              Icons.monetization_on,
-                              color: Colors.white,
-                              size: 32,
-                            ) // Change for a Asset
-                            ),
-                        const Divider(
-                          height: 0,
-                          endIndent: 16,
-                          indent: 16,
-                        ),
-                        const SizedBox(
-                          height: 16,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            const SizedBox(
-                              width: 32,
-                            ),
-                            const Text(
-                              'Utilizado',
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            const Spacer(),
-                            Text(Helper.fixMoney(state.wallet.used * -1),
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  color: Colors.white,
-                                )),
-                            const SizedBox(
-                              width: 32,
-                            ),
-                          ],
-                        ),
-                        const SizedBox(
-                          height: 16,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            const SizedBox(
-                              width: 32,
-                            ),
-                            const Text(
-                              'Ultima Transaccion',
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            const Spacer(),
-                            Text(state.wallet.lastUpdated,
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  color: Colors.white,
-                                )),
-                            const SizedBox(
-                              width: 32,
-                            ),
-                          ],
-                        ),
-                      ],
-                    )),
-              )),
-          Expanded(
-            child: Container(
-              width: double.infinity,
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(20.0),
-                  topRight: Radius.circular(20.0),
-                ),
-              ),
-              child: RefreshIndicator(
-                onRefresh: () async {
-                  context.read<ContactsCubit>().getMyAllocatedContacts(id);
+            ),
+            const SizedBox(
+              height: 16,
+            ),
+            Text(
+              _errorWalletMessage(state),
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(
+              height: 102,
+            ),
+            ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                    elevation: 5,
+                    backgroundColor: Colors.transparent,
+                    shadowColor: Colors.transparent,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    alignment: Alignment.center,
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 24, vertical: 8)),
+                onPressed: () {
+                  context.read<BudgetCubit>().getWalletAndHistory(id);
                 },
-                child: Scrollbar(
-                    controller: _scrollController,
-                    radius: const Radius.circular(45),
-                    child: ListView.builder(
-                        //padding: ,
-                        controller: _scrollController,
-                        itemCount: filteredBudget.length,
-                        itemBuilder: (context, index) {
-                          if (index >= filteredBudget.length) {
-                            return const Center(
-                                child: CustomCircularProgressBar());
-                          }
-                          return BudgetTile(
-                            transaction: filteredBudget[index],
-                          );
-                        })),
-              ),
-            ),
-          )
-        ],
+                child: const Text('Reintentar',
+                    style:
+                    TextStyle(fontSize: 18, fontWeight: FontWeight.bold)))
+          ],
+        ),
       );
-    } else if (state is BudgetStateError) {
-      return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Container(
-            padding: const EdgeInsets.only(
-                top: 12.0, left: 14.0, right: 14.0, bottom: 22.0),
-            child: ListTile(
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20)),
-              title: const Text(
-                'N° Contactos',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                  fontSize: 16,
-                ),
-              ),
-              trailing: const Text(
-                '# - Error',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontStyle: FontStyle.italic,
-                  color: Colors.white,
-                  fontSize: 16,
-                ),
-              ),
-              tileColor: Colors.greenAccent.withOpacity(0.3),
-            )),
-        Expanded(
-            child: Container(
-          width: double.infinity,
-          decoration: const BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(20.0),
-              topRight: Radius.circular(20.0),
+    } else if (state is BudgetStateLoaded) {
+      final filteredBudget = state
+          .history; //.where((element) => element.name.toLowerCase().contains(state));
+      return HeaderBudgetMetrics(
+        assigned: state.wallet.assigned,
+        used: state.wallet.used,
+        lastUpdate: state.wallet.lastUpdated,
+        body: RefreshIndicator(
+          onRefresh: () async {
+            context.read<ContactsCubit>().getMyAllocatedContacts(id);
+          },
+          child: Scrollbar(
+              controller: _scrollController,
+              radius: const Radius.circular(45),
+              child: ListView.builder(
+                  //padding: ,
+                  controller: _scrollController,
+                  itemCount: filteredBudget.length,
+                  itemBuilder: (context, index) {
+                    if (index >= filteredBudget.length) {
+                      return const Center(child: CustomCircularProgressBar());
+                    }
+                    return BudgetTile(
+                      transaction: filteredBudget[index],
+                    );
+                  })),
+        ),
+      );
+    } else if (state is BudgetStateTimeout || state is BudgetStateError || state is BudgetStateCatchError) {
+      return HeaderBudgetMetrics(
+        lastUpdate: undefinedCard,
+        body: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisSize: MainAxisSize.max,
+          children: [
+            const SizedBox(
+              height: 128,
             ),
-          ),
-          child: Column(
-            children: [
-              const Icon(
+            ShaderMask(
+              blendMode: BlendMode.srcIn,
+              shaderCallback: (Rect bounds) => LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: ColorPalette.alertGradient)
+                  .createShader(bounds),
+              child: const Icon(
                 Icons.error,
-                size: 48,
+                size: 72,
               ),
-              Text(state.sms),
-              ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                      elevation: 5,
-                      backgroundColor: Colors.transparent,
-                      shadowColor: Colors.transparent,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      alignment: Alignment.center,
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 24, vertical: 8)),
-                  onPressed: () {
-                    context.read<BudgetCubit>().getWalletAndHistory(id);
-                  },
-                  child: const Text('Reintentar'))
-            ],
-          ),
-        ))
-      ]);
-    } else if (state is BudgetStateCatchError) {
-      return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Container(
-            padding: const EdgeInsets.only(
-                top: 12.0, left: 14.0, right: 14.0, bottom: 22.0),
-            child: ListTile(
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20)),
-              title: const Text(
-                'N° Contactos',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                  fontSize: 16,
-                ),
-              ),
-              trailing: const Text(
-                '# - Error',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontStyle: FontStyle.italic,
-                  color: Colors.white,
-                  fontSize: 16,
-                ),
-              ),
-              tileColor: Colors.greenAccent.withOpacity(0.3),
-            )),
-        Expanded(
-            child: Container(
-          width: double.infinity,
-          decoration: const BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(20.0),
-              topRight: Radius.circular(20.0),
             ),
-          ),
-          child: Column(
-            children: [
-              const Icon(
-                Icons.error,
-                size: 48,
-              ),
-              Text(state.sms),
-              ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                      elevation: 5,
-                      backgroundColor: Colors.transparent,
-                      shadowColor: Colors.transparent,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      alignment: Alignment.center,
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 24, vertical: 8)),
-                  onPressed: () {
-                    context.read<BudgetCubit>().getWalletAndHistory(id);
-                  },
-                  child: const Text('Reintentar'))
-            ],
-          ),
-        ))
-      ]);
+            const SizedBox(
+              height: 16,
+            ),
+            Text(
+              _errorWalletMessage(state),
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(
+              height: 102,
+            ),
+            ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                    elevation: 5,
+                    backgroundColor: Colors.transparent,
+                    shadowColor: Colors.transparent,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    alignment: Alignment.center,
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 24, vertical: 8)),
+                onPressed: () {
+                  context.read<BudgetCubit>().getWalletAndHistory(id);
+                },
+                child: const Text('Reintentar',
+                    style:
+                    TextStyle(fontSize: 18, fontWeight: FontWeight.bold)))
+          ],
+        ),
+      );
     } else {
       return Container();
+    }
+  }
+
+  String _errorWalletMessage(BudgetState state) {
+    if (state is BudgetStateLoadedButEmpty) {
+      return state.message;
+    } else if (state is BudgetStateTimeout) {
+      return state.message;
+    } else if (state is BudgetStateError) {
+      return state.message;
+    } else if (state is BudgetStateCatchError) {
+      return state.message;
+    } else {
+      return 'Error en aplicacion';
     }
   }
 }

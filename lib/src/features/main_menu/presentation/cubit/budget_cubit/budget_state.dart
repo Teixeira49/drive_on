@@ -8,9 +8,10 @@ class BudgetStateInitial extends BudgetState {}
 class BudgetStateLoading extends BudgetState {}
 
 class BudgetStateLoadedButEmpty extends BudgetState {
+  final BudgetWallet wallet;
   final String message;
 
-  BudgetStateLoadedButEmpty({required this.message});
+  BudgetStateLoadedButEmpty({required this.wallet, required this.message});
 }
 
 class BudgetStateLoaded extends BudgetState {
@@ -21,19 +22,19 @@ class BudgetStateLoaded extends BudgetState {
 }
 
 class BudgetStateTimeout extends BudgetState {
-  final String sms;
+  final String message;
 
-  BudgetStateTimeout({required this.sms});
+  BudgetStateTimeout({required this.message});
 }
 
 class BudgetStateError extends BudgetState {
-  final String sms;
+  final String message;
 
-  BudgetStateError({required this.sms});
+  BudgetStateError({required this.message});
 }
 
 class BudgetStateCatchError extends BudgetState {
-  final String sms;
+  final String message;
 
-  BudgetStateCatchError({required this.sms});
+  BudgetStateCatchError({required this.message});
 }

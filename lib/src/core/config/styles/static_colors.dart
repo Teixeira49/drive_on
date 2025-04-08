@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 abstract class ColorPalette {
-
   static List<Color> authGradientLight = [
     Colors.white,
     Colors.grey[50]!,
@@ -31,7 +30,10 @@ abstract class ColorPalette {
   static Color receiveMoney = Colors.green;
   static Color sendMoney = Colors.red;
 
-  static Color alert = Colors.redAccent;
+  static List<Color> alertGradient = [
+    Colors.red,
+    Colors.orangeAccent,
+  ];
 
   static double elevationScaleNone = 0;
   static double elevationScaleS = 5;
