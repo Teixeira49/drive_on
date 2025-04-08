@@ -91,7 +91,7 @@ class MyLoginPageState extends State<LoginPage> {
                     gradient: LinearGradient(
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
-                        colors: ColorPalette.authGradient)),
+                        colors: ColorPalette.authGradientLight)),
                 child: Scaffold(
                     backgroundColor: Colors.transparent,
                     body: Center(
@@ -171,7 +171,7 @@ class MyLoginPageState extends State<LoginPage> {
                             width: AppSpacing.xs,
                           ),
                           Text(
-                            "Secure Contact: ${_version != 'Cargando...' ? _version : emptyString}. Flembee Inc.",
+                            "Secure Contact: ${_version != 'Cargando...' ? _version : emptyString}. Flembee Tech. C.A.",
                             style: const TextStyle(color: Colors.white),
                           ),
                         ],

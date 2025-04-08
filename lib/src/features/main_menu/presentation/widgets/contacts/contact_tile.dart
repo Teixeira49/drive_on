@@ -30,7 +30,7 @@ class ContactTile extends StatelessWidget {
           leading: const Icon(Icons.account_circle),
           trailing: const Icon(Icons.navigate_next),
           onTap: () {
-            ModalBottomSheet.show(context, securityContacts);
+            ModalBottomSheetContact.show(context, securityContacts);
           },
         ),
         const Divider(height: 3, indent: 12, endIndent: 12,)
