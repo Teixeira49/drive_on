@@ -19,10 +19,11 @@ class BudgetCubit extends Cubit<BudgetState> {
       final data = await getBudgetUseCase.call(BudgetTransactionParams(id: id));
       data.fold(
           (l) => emit(selectErrorState(l.failType ?? '', l.message)),
-          (r) => emit(BudgetStateLoaded(
-              wallet: r.budgetWallet, history: r.transactions)));
+          (r) => r.transactions.isNotEmpty ? emit(BudgetStateLoaded(
+              wallet: r.budgetWallet, history: r.transactions)) : emit(BudgetStateLoadedButEmpty(
+              wallet: r.budgetWallet, message: 'No posee Transacciones Recientes')));
     } catch (e) {
-      emit(BudgetStateCatchError(sms: e.toString()));
+      emit(BudgetStateCatchError(message: e.toString()));
     } finally {
       _isFetching = false;
     }
@@ -32,12 +33,12 @@ class BudgetCubit extends Cubit<BudgetState> {
 BudgetState selectErrorState(String state, String message) {
   switch (state) {
     case "AccountException":
-      return BudgetStateError(sms: message);
+      return BudgetStateError(message: message);
     case "ServerException":
-      return BudgetStateError(sms: message);
+      return BudgetStateError(message: message);
     case "":
-      return BudgetStateError(sms: message);
+      return BudgetStateError(message: message);
     default:
-      return BudgetStateCatchError(sms: message);
+      return BudgetStateCatchError(message: message);
   }
 }
