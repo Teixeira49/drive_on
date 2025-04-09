@@ -84,8 +84,6 @@ class MainMenuState extends State<MainMenuPage> {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
-
     final MainMenuRemoteDatasource mainMenuRemoteDatasource =
         MainMenuRemoteDatasourceImpl();
     final MainMenuRepository mainMenuRepository =
@@ -150,6 +148,24 @@ class MainMenuState extends State<MainMenuPage> {
                           PopupMenu(
                             visibility: _currentPageIndex,
                             ref: _viewFABIndex,
+                            refreshFunction: () async {
+                              final result =
+                                  await Navigator.of(context).pushNamed(
+                                '/main/contacts-wallet/new-contact',
+                                arguments: {
+                                  'id': id,
+                                  'contacts': stateCubit is ContactsStateLoaded
+                                      ? stateCubit.securityContacts
+                                      : [],
+                                  'op': 'add'
+                                },
+                              );
+                              if (result == true) {
+                                contextCubit
+                                    .read<ContactsCubit>()
+                                    .getMyAllocatedContacts(id);
+                              }
+                            },
                           )
                         ],
                       ),
@@ -162,8 +178,27 @@ class MainMenuState extends State<MainMenuPage> {
                             stateCubitProfile, contextCubitProfile, id),
                       ][_currentPageIndex],
                       floatingActionButton: Visibility(
-                          visible: _viewFABIndex == _currentPageIndex,
-                          child: const GradientFloatingActionButton()),
+                          visible: _viewFABIndex == _currentPageIndex &&
+                              _checkState(stateCubit),
+                          child: GradientFloatingActionButton(
+                            refreshContacts: () async {
+                              final result = await Navigator.of(context).pushNamed(
+                                '/main/contacts-wallet/new-contact',
+                                arguments: {
+                                  'id': id,
+                                  'contacts': stateCubit is ContactsStateLoaded
+                                      ? stateCubit.securityContacts
+                                      : [],
+                                  'op': 'add'
+                                },
+                              );
+                              if (result == true) {
+                                contextCubit
+                                    .read<ContactsCubit>()
+                                    .getMyAllocatedContacts(id);
+                              }
+                            },
+                          )),
                       bottomNavigationBar: DynamicNavigationBar(
                         currentIndex: _currentPageIndex,
                         onTap: _changeView,
@@ -335,6 +370,13 @@ class MainMenuState extends State<MainMenuPage> {
     } else {
       return Container();
     }
+  }
+
+  bool _checkState(ContactsState state) {
+    if (state is ContactsStateLoaded || state is ContactsStateLoadedButEmpty) {
+      return true;
+    }
+    return false;
   }
 
   String _errorContactMessage(ContactsState state) {

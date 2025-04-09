@@ -120,7 +120,6 @@ class ModalBottomSheetContact {
                                 style: ElevatedButton.styleFrom(
                                   shape: const CircleBorder(),
                                   padding: const EdgeInsets.all(20),
-                                  //backgroundColor: Colors.blue, // <-- Button color
                                   foregroundColor: ColorPalette
                                       .deleteContact, // <-- Splash color
                                 ),

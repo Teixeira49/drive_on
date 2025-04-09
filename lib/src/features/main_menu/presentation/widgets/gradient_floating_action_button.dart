@@ -3,7 +3,12 @@ import 'package:flutter/material.dart';
 import '../../../../core/config/styles/static_colors.dart';
 
 class GradientFloatingActionButton extends StatelessWidget {
-  const GradientFloatingActionButton({super.key});
+  final VoidCallback refreshContacts;
+
+  const GradientFloatingActionButton({
+    super.key,
+    required this.refreshContacts
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -11,7 +16,7 @@ class GradientFloatingActionButton extends StatelessWidget {
       foregroundColor: Colors.white,
       shape: const CircleBorder(),
       backgroundColor: Colors.transparent,
-      onPressed: () {},
+      onPressed: refreshContacts,
       elevation: ColorPalette.elevationScaleNone,
       child: Container(
         alignment: Alignment.center,
@@ -32,6 +37,4 @@ class GradientFloatingActionButton extends StatelessWidget {
       ),
     );
   }
-
-
 }

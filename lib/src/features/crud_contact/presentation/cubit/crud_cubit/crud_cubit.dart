@@ -20,7 +20,7 @@ class CRUDCubit extends Cubit<CRUDState> {
   Future<void> addContact(List<SecurityContacts> contacts, String name,
       String phone, String? relationship, int id) async {
     try {
-      emit(CRUDStateLoading());
+      emit(CRUDStateLoading(message: 'Agregando Contacto'));
       final data = await addContactUseCase.call(CRUDSecurityContactsParams(
           newList: contacts,
           userId: id,
@@ -39,7 +39,7 @@ class CRUDCubit extends Cubit<CRUDState> {
   Future<void> updateContact(List<SecurityContacts> contacts, String name,
       String phone, String relationship, int id) async {
     try {
-      emit(CRUDStateLoading());
+      emit(CRUDStateLoading(message: 'Actualizando Contacto'));
       final data = await updateContactUseCase.call(CRUDSecurityContactsParams(
           newList: contacts,
           userId: id,

@@ -30,6 +30,8 @@ class ContactsRemoteDatasourceImpl extends ContactsRemoteDatasource {
       sendList.add(SecurityContactsModel.fromEntity(i).toJson());
     }
 
+    sendList.add(params.getUpdatedContact());
+
     try {
       final response = await r.retry(
           () => dio.post('$apiUrl/security-contacts/${params.getUserId()}',

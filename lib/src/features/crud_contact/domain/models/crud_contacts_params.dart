@@ -21,4 +21,12 @@ class CRUDSecurityContactsParams {
   int getUserId() {
     return userId;
   }
+
+  Map<String, dynamic> getUpdatedContact() {
+    return {
+      'name': name,
+      'phone': phone,
+      'relationship': relationship
+    };
+  }
 }
