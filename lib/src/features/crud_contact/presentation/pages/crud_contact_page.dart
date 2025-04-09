@@ -218,7 +218,9 @@ class CRUDContactState extends State<CRUDContactPage> {
                                       alignment: Alignment.centerLeft,
                                       child: Text(item));
                                 }).toList(),
-                                onChanged: (Object? value) {},
+                                onChanged: (newValue) {
+                                  _relationshipController.value = newValue;
+                                },
                               ),
                             ),
                             const SizedBox(
