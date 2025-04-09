@@ -182,7 +182,8 @@ class MainMenuState extends State<MainMenuPage> {
                               _checkState(stateCubit),
                           child: GradientFloatingActionButton(
                             refreshContacts: () async {
-                              final result = await Navigator.of(context).pushNamed(
+                              final result =
+                                  await Navigator.of(context).pushNamed(
                                 '/main/contacts-wallet/new-contact',
                                 arguments: {
                                   'id': id,
@@ -310,6 +311,23 @@ class MainMenuState extends State<MainMenuPage> {
                             .read<ContactsCubit>()
                             .deleteContact(filteredContacts, index, id);
                         Navigator.of(context).pop();
+                      },
+                      updateFunction: () async {
+                        final result = await Navigator.of(context).pushNamed(
+                          '/main/contacts-wallet/new-contact',
+                          arguments: {
+                            'id': id,
+                            'contacts': filteredContacts,
+                            'op': 'update',
+                            'index': index
+                          },
+                        );
+                        if (result == true) {
+                          context
+                              .read<ContactsCubit>()
+                              .getMyAllocatedContacts(id);
+                        }
+                        Navigator.pop(context);
                       },
                     );
                   })),

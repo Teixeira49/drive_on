@@ -27,6 +27,8 @@ class CRUDContactPage extends StatefulWidget {
 }
 
 class CRUDContactState extends State<CRUDContactPage> {
+  bool _isInit = true;
+  int _index = -1;
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
@@ -35,7 +37,23 @@ class CRUDContactState extends State<CRUDContactPage> {
 
   @override
   void initState() {
+    _isInit = true;
     super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    if (_isInit) {
+      final argument = ModalRoute.of(context)!.settings.arguments as Map;
+      if (argument['op'] == updateTarget) {
+        _index = argument['index'];
+        _nameController.text = argument['contacts'][_index].name;
+        _phoneController.text = argument['contacts'][_index].phone;
+        _relationshipController.value = argument['contacts'][_index].relationship;
+      }
+    }
+    super.didChangeDependencies();
+    _isInit = false;
   }
 
   @override
@@ -51,6 +69,7 @@ class CRUDContactState extends State<CRUDContactPage> {
     final argument = ModalRoute.of(context)!.settings.arguments as Map;
 
     final int id = argument['id'];
+    final String op = argument['op'];
     final List<SecurityContacts> contacts = argument['contacts'];
 
     final ContactsRemoteDatasource datasource = ContactsRemoteDatasourceImpl();
@@ -92,9 +111,9 @@ class CRUDContactState extends State<CRUDContactPage> {
                       colors: ColorPalette.mainGradient)),
               child: Scaffold(
                   appBar: AppBar(
-                    title: const Text(
-                      "Añadir contacto",
-                      style: TextStyle(
+                    title: Text(
+                      op == updateTarget ? "Actualizar contacto" : "Añadir contacto",
+                      style: const TextStyle(
                         color: Colors.white,
                         fontSize: 22.0,
                         fontWeight: FontWeight.w700,
@@ -213,12 +232,23 @@ class CRUDContactState extends State<CRUDContactPage> {
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 24, vertical: 8)),
                               onPressed: () {
-                                context.read<CRUDCubit>().addContact(
-                                    contacts,
-                                    Helper.capitalize(_nameController.text),
-                                    _phoneController.text,
-                                    _relationshipController.value,
-                                    id);
+                                if (op == updateTarget) {
+                                  context.read<CRUDCubit>().updateContact(
+                                      contacts,
+                                      Helper.capitalize(_nameController.text),
+                                      _phoneController.text,
+                                      _relationshipController.value,
+                                      id,
+                                      _index
+                                  );
+                                } else {
+                                  context.read<CRUDCubit>().addContact(
+                                      contacts,
+                                      Helper.capitalize(_nameController.text),
+                                      _phoneController.text,
+                                      _relationshipController.value,
+                                      id);
+                                }
                               },
                               child: const Text('Guardar',
                                   style: TextStyle(

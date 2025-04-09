@@ -6,11 +6,13 @@ import '../modal_bottom_sheet.dart';
 class ContactTile extends StatelessWidget {
   final SecurityContacts securityContacts;
   final VoidCallback deleteFunction;
+  final VoidCallback updateFunction;
 
   const ContactTile(
       {super.key,
       required this.securityContacts,
-      required this.deleteFunction});
+      required this.deleteFunction,
+      required this.updateFunction});
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +39,7 @@ class ContactTile extends StatelessWidget {
               trailing: const Icon(Icons.navigate_next),
               onTap: () {
                 ModalBottomSheetContact.show(
-                    context, securityContacts, deleteFunction);
+                    context, securityContacts, deleteFunction, updateFunction);
               },
             ),
             const Divider(

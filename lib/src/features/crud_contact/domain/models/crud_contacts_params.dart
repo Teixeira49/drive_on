@@ -6,12 +6,14 @@ class CRUDSecurityContactsParams {
       required this.name,
       required this.phone,
       this.relationship,
+      this.index,
       required this.userId});
 
   List<SecurityContacts> newList;
   String name;
   String phone;
   String? relationship;
+  int? index;
   int userId;
 
   List<SecurityContacts> getContactList() {
@@ -20,6 +22,10 @@ class CRUDSecurityContactsParams {
 
   int getUserId() {
     return userId;
+  }
+
+  int getIndex() {
+    return index ?? -1;
   }
 
   Map<String, dynamic> getUpdatedContact() {

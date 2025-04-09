@@ -9,7 +9,7 @@ import '../../../../core/helpers/helpers.dart';
 
 class ModalBottomSheetContact {
   static void show(BuildContext context, SecurityContacts contacts,
-      VoidCallback deleteFunction) {
+      VoidCallback deleteFunction, VoidCallback updateFunction) {
     showModalBottomSheet<void>(
         context: context,
         useSafeArea: true,
@@ -94,9 +94,7 @@ class ModalBottomSheetContact {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               ElevatedButton(
-                                onPressed: () {
-                                  print('editar');
-                                },
+                                onPressed: updateFunction,
                                 style: ElevatedButton.styleFrom(
                                   shape: const CircleBorder(),
                                   padding: const EdgeInsets.all(20),
