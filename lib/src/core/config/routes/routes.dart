@@ -9,6 +9,10 @@ String getInitialRoute() {
   return '/auth/login/';
 }
 
+LoginPage getInitialRoutePage() {
+  return const LoginPage();
+}
+
 Map<String, WidgetBuilder> getAppRoutes() {
   final commonRoutes = <String, WidgetBuilder> {
     '/auth/login/': (context) => const LoginPage(),

@@ -49,7 +49,8 @@ class CRUDContactState extends State<CRUDContactPage> {
         _index = argument['index'];
         _nameController.text = argument['contacts'][_index].name;
         _phoneController.text = argument['contacts'][_index].phone;
-        _relationshipController.value = argument['contacts'][_index].relationship;
+        _relationshipController.value =
+            argument['contacts'][_index].relationship;
       }
     }
     super.didChangeDependencies();
@@ -70,7 +71,8 @@ class CRUDContactState extends State<CRUDContactPage> {
 
     final int id = argument['id'];
     final String op = argument['op'];
-    final List<SecurityContacts> contacts = argument['contacts'];
+    final List<SecurityContacts> contacts =
+        argument['contacts'].isNotEmpty ? argument['contacts'] : [];
 
     final ContactsRemoteDatasource datasource = ContactsRemoteDatasourceImpl();
     final CRUDContactsRepository contactsRepository =
@@ -112,7 +114,9 @@ class CRUDContactState extends State<CRUDContactPage> {
               child: Scaffold(
                   appBar: AppBar(
                     title: Text(
-                      op == updateTarget ? "Actualizar contacto" : "Añadir contacto",
+                      op == updateTarget
+                          ? "Actualizar contacto"
+                          : "Añadir contacto",
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 22.0,
@@ -123,7 +127,7 @@ class CRUDContactState extends State<CRUDContactPage> {
                       PopupMenu(
                         visibility: 0,
                         ref: 0,
-                        refreshFunction: () { },
+                        refreshFunction: () {},
                       )
                     ],
                   ),
@@ -222,9 +226,9 @@ class CRUDContactState extends State<CRUDContactPage> {
                             ),
                             ElevatedButton(
                               style: ElevatedButton.styleFrom(
-                                  elevation: 5,
-                                  backgroundColor: Colors.transparent,
-                                  shadowColor: Colors.transparent,
+                                  elevation: ColorPalette.elevationScaleS,
+                                  backgroundColor: Colors.lightBlueAccent,
+                                  shadowColor: Colors.cyanAccent,
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(30),
                                   ),
@@ -239,8 +243,7 @@ class CRUDContactState extends State<CRUDContactPage> {
                                       _phoneController.text,
                                       _relationshipController.value,
                                       id,
-                                      _index
-                                  );
+                                      _index);
                                 } else {
                                   context.read<CRUDCubit>().addContact(
                                       contacts,
@@ -253,7 +256,8 @@ class CRUDContactState extends State<CRUDContactPage> {
                               child: const Text('Guardar',
                                   style: TextStyle(
                                       fontSize: 18,
-                                      fontWeight: FontWeight.bold)),
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white)),
                             ),
                           ],
                         ),

@@ -34,6 +34,8 @@ abstract class ColorPalette {
   static Color editContact = Colors.orangeAccent;
   static Color deleteContact = Colors.redAccent;
 
+  static Color warning = Colors.orangeAccent;
+
   static List<Color> alertGradient = [
     Colors.red,
     Colors.orangeAccent,

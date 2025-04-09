@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../core/config/styles/static_colors.dart';
+
 class CustomCircularProgressBar extends StatelessWidget {
 
   const CustomCircularProgressBar({super.key, this.labelText});
@@ -11,12 +13,9 @@ class CustomCircularProgressBar extends StatelessWidget {
     return SizedBox(
       height: 50,
       width: 50,
-      child: CircularProgressIndicator(
-        valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).colorScheme.primary),
-        backgroundColor: Theme.of(context).colorScheme.onPrimaryContainer,
+      child:  CircularProgressIndicator(
         strokeWidth: 5.5,
         strokeAlign: BorderSide.strokeAlignInside,
-        color: Theme.of(context).colorScheme.secondary,
         semanticsLabel: labelText,
       ),
     );

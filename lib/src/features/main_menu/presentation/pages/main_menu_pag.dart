@@ -1,6 +1,7 @@
 import 'package:drive_on/src/features/main_menu/data/datasource/remote/main_menu_datasource_abst.dart';
 import 'package:drive_on/src/features/main_menu/data/repository/main_menu_repository_impl.dart';
 import 'package:drive_on/src/features/main_menu/domain/repository/main_menu_repository_abst.dart';
+import 'package:drive_on/src/shared/data/entities/security_contacts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -266,9 +267,9 @@ class MainMenuState extends State<MainMenuPage> {
             ),
             ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                    elevation: 5,
-                    backgroundColor: Colors.transparent,
-                    shadowColor: Colors.transparent,
+                    elevation: ColorPalette.elevationScaleS,
+                    backgroundColor: Colors.lightBlueAccent,
+                    shadowColor: Colors.cyanAccent,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30),
                     ),
@@ -279,8 +280,10 @@ class MainMenuState extends State<MainMenuPage> {
                   context.read<ContactsCubit>().getMyAllocatedContacts(id);
                 },
                 child: const Text('Reintentar',
-                    style:
-                        TextStyle(fontSize: 18, fontWeight: FontWeight.bold)))
+                    style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white)))
           ],
         ),
       );
@@ -367,9 +370,9 @@ class MainMenuState extends State<MainMenuPage> {
             ),
             ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                    elevation: 5,
-                    backgroundColor: Colors.transparent,
-                    shadowColor: Colors.transparent,
+                    elevation: ColorPalette.elevationScaleS,
+                    backgroundColor: Colors.lightBlueAccent,
+                    shadowColor: Colors.cyanAccent,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30),
                     ),
@@ -380,8 +383,10 @@ class MainMenuState extends State<MainMenuPage> {
                   context.read<ContactsCubit>().getMyAllocatedContacts(id);
                 },
                 child: const Text('Reintentar',
-                    style:
-                        TextStyle(fontSize: 18, fontWeight: FontWeight.bold)))
+                    style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white)))
           ],
         ),
       );
@@ -550,9 +555,9 @@ class MainMenuState extends State<MainMenuPage> {
             ),
             ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                    elevation: 5,
-                    backgroundColor: Colors.transparent,
-                    shadowColor: Colors.transparent,
+                    elevation: ColorPalette.elevationScaleS,
+                    backgroundColor: Colors.lightBlueAccent,
+                    shadowColor: Colors.cyanAccent,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30),
                     ),
@@ -563,8 +568,10 @@ class MainMenuState extends State<MainMenuPage> {
                   context.read<ProfileCubit>().getProfile(id);
                 },
                 child: const Text('Reintentar',
-                    style:
-                        TextStyle(fontSize: 18, fontWeight: FontWeight.bold)))
+                    style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white)))
           ],
         ),
       );
@@ -631,9 +638,9 @@ class MainMenuState extends State<MainMenuPage> {
             ),
             ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                    elevation: 5,
-                    backgroundColor: Colors.transparent,
-                    shadowColor: Colors.transparent,
+                    elevation: ColorPalette.elevationScaleS,
+                    backgroundColor: Colors.lightBlueAccent,
+                    shadowColor: Colors.cyanAccent,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30),
                     ),
@@ -644,8 +651,10 @@ class MainMenuState extends State<MainMenuPage> {
                   context.read<BudgetCubit>().getWalletAndHistory(id);
                 },
                 child: const Text('Reintentar',
-                    style:
-                        TextStyle(fontSize: 18, fontWeight: FontWeight.bold)))
+                    style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white)))
           ],
         ),
       );
@@ -714,9 +723,9 @@ class MainMenuState extends State<MainMenuPage> {
             ),
             ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                    elevation: 5,
-                    backgroundColor: Colors.transparent,
-                    shadowColor: Colors.transparent,
+                    elevation: ColorPalette.elevationScaleS,
+                    backgroundColor: Colors.lightBlueAccent,
+                    shadowColor: Colors.cyanAccent,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30),
                     ),
@@ -727,8 +736,10 @@ class MainMenuState extends State<MainMenuPage> {
                   context.read<BudgetCubit>().getWalletAndHistory(id);
                 },
                 child: const Text('Reintentar',
-                    style:
-                        TextStyle(fontSize: 18, fontWeight: FontWeight.bold)))
+                    style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white)))
           ],
         ),
       );

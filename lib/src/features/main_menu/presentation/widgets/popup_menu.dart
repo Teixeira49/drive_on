@@ -116,7 +116,7 @@ class PopupMenu extends StatelessWidget {
           }
         },
         itemBuilder: (contextCubit) => [
-              if (visibility == ref && visibility != 0) ...mainItems,
+              //if (visibility == ref && visibility != 0) ...mainItems,
               // Se puede hacer anidado
               if (visibility < ref) ...budgetItems,
               if (visibility > ref) ...profileItems,
