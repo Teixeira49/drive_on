@@ -2,9 +2,7 @@
 
 Evaluación tecnica para optar al puesto de desarrollador **MOBILE** en **Flembee Technologies C. A**.
 
-Enunciado:
-
-[Pruebas_Técnicas.pdf](https://github.com/user-attachments/files/19675511/Pruebas_Tecnicas.pdf)
+Enunciado: [Pruebas_Técnicas.pdf](https://github.com/user-attachments/files/19675511/Pruebas_Tecnicas.pdf)
 
 ---
 
