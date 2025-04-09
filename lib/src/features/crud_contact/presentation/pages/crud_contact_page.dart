@@ -4,12 +4,14 @@ import 'package:drive_on/src/shared/data/entities/security_contacts.dart';
 import 'package:drive_on/src/shared/presentation/widgets/floating_snack_bars.dart';
 import 'package:drive_on/src/shared/presentation/widgets/loading_dialog.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/config/styles/margin.dart';
 import '../../../../core/config/styles/static_colors.dart';
 import '../../../../core/helpers/helpers.dart';
 import '../../../../core/utils/constants/app_constants.dart';
+import '../../../../shared/presentation/formatter/phone_formatter.dart';
 import '../../../main_menu/presentation/widgets/popup_menu.dart';
 import '../../data/repository/crud_contacts_repository_impl.dart';
 import '../../domain/repository/crud_contacts_repository_abstract.dart';
@@ -185,7 +187,11 @@ class CRUDContactState extends State<CRUDContactPage> {
                               padding: const EdgeInsets.symmetric(vertical: 24),
                               child: TextFormField(
                                 controller: _phoneController,
-                                keyboardType: TextInputType.name,
+                                keyboardType: TextInputType.phone,
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.digitsOnly,
+                                  PhoneNumberFormatter(),
+                                ],
                                 decoration: const InputDecoration(
                                     suffixIcon: Icon(Icons.phone),
                                     labelText: "N° Telefono"),
