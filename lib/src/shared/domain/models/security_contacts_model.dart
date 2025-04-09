@@ -1,4 +1,4 @@
-import '../../../data/entities/security_contacts.dart';
+import '../../data/entities/security_contacts.dart';
 
 class SecurityContactsModel extends SecurityContacts {
   SecurityContactsModel({

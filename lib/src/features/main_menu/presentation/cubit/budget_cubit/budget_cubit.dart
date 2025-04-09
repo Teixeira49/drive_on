@@ -19,9 +19,12 @@ class BudgetCubit extends Cubit<BudgetState> {
       final data = await getBudgetUseCase.call(BudgetTransactionParams(id: id));
       data.fold(
           (l) => emit(selectErrorState(l.failType ?? '', l.message)),
-          (r) => r.transactions.isNotEmpty ? emit(BudgetStateLoaded(
-              wallet: r.budgetWallet, history: r.transactions)) : emit(BudgetStateLoadedButEmpty(
-              wallet: r.budgetWallet, message: 'No posee Transacciones Recientes')));
+          (r) => r.transactions.isNotEmpty
+              ? emit(BudgetStateLoaded(
+                  wallet: r.budgetWallet, history: r.transactions))
+              : emit(BudgetStateLoadedButEmpty(
+                  wallet: r.budgetWallet,
+                  message: 'No posee Transacciones Recientes')));
     } catch (e) {
       emit(BudgetStateCatchError(message: e.toString()));
     } finally {

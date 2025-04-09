@@ -1,6 +1,7 @@
 import 'package:drive_on/src/features/main_menu/data/datasource/remote/main_menu_datasource_abst.dart';
 import 'package:drive_on/src/features/main_menu/data/repository/main_menu_repository_impl.dart';
 import 'package:drive_on/src/features/main_menu/domain/repository/main_menu_repository_abst.dart';
+import 'package:drive_on/src/shared/data/entities/security_contacts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -14,7 +15,8 @@ import '../../../../shared/presentation/widgets/dynamic_bottom_bar.dart';
 import '../../../../shared/presentation/widgets/floating_snack_bars.dart';
 import '../../data/datasource/remote/main_menu_datasource_impl.dart';
 import '../../domain/use_cases/budget/get_budget_use_case.dart';
-import '../../domain/use_cases/contacts/get_contacts_usecase.dart';
+import '../../domain/use_cases/contacts/delete_contacts_use_case.dart';
+import '../../domain/use_cases/contacts/get_contacts_use_case.dart';
 import '../../domain/use_cases/profile/get_profile_use_case.dart';
 import '../cubit/budget_cubit/budget_cubit.dart';
 import '../cubit/budget_cubit/budget_state.dart';
@@ -83,14 +85,14 @@ class MainMenuState extends State<MainMenuPage> {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
-
     final MainMenuRemoteDatasource mainMenuRemoteDatasource =
         MainMenuRemoteDatasourceImpl();
     final MainMenuRepository mainMenuRepository =
         MainMenuRepositoryImpl(mainMenuRemoteDatasource);
     final GetContactsUseCase getContactsUseCase =
         GetContactsUseCase(mainMenuRepository);
+    final DeleteContactsUseCase deleteContactsUseCase =
+        DeleteContactsUseCase(mainMenuRepository);
     final GetProfileUseCase getProfileUseCase =
         GetProfileUseCase(mainMenuRepository);
     final GetBudgetUseCase getBudgetUseCase =
@@ -105,8 +107,9 @@ class MainMenuState extends State<MainMenuPage> {
           BlocProvider(
               create: (_) => ProfileCubit(getProfileUseCase)..getProfile(id)),
           BlocProvider(
-              create: (_) => ContactsCubit(getContactsUseCase)
-                ..getMyAllocatedContacts(id)),
+              create: (_) =>
+                  ContactsCubit(getContactsUseCase, deleteContactsUseCase)
+                    ..getMyAllocatedContacts(id)),
           BlocProvider(
             create: (_) =>
                 BudgetCubit(getBudgetUseCase)..getWalletAndHistory(id),
@@ -146,6 +149,24 @@ class MainMenuState extends State<MainMenuPage> {
                           PopupMenu(
                             visibility: _currentPageIndex,
                             ref: _viewFABIndex,
+                            refreshFunction: () async {
+                              final result =
+                                  await Navigator.of(context).pushNamed(
+                                '/main/contacts-wallet/new-contact',
+                                arguments: {
+                                  'id': id,
+                                  'contacts': stateCubit is ContactsStateLoaded
+                                      ? stateCubit.securityContacts
+                                      : [],
+                                  'op': 'add'
+                                },
+                              );
+                              if (result == true) {
+                                contextCubit
+                                    .read<ContactsCubit>()
+                                    .getMyAllocatedContacts(id);
+                              }
+                            },
                           )
                         ],
                       ),
@@ -158,8 +179,28 @@ class MainMenuState extends State<MainMenuPage> {
                             stateCubitProfile, contextCubitProfile, id),
                       ][_currentPageIndex],
                       floatingActionButton: Visibility(
-                          visible: _viewFABIndex == _currentPageIndex,
-                          child: const GradientFloatingActionButton()),
+                          visible: _viewFABIndex == _currentPageIndex &&
+                              _checkState(stateCubit),
+                          child: GradientFloatingActionButton(
+                            refreshContacts: () async {
+                              final result =
+                                  await Navigator.of(context).pushNamed(
+                                '/main/contacts-wallet/new-contact',
+                                arguments: {
+                                  'id': id,
+                                  'contacts': stateCubit is ContactsStateLoaded
+                                      ? stateCubit.securityContacts
+                                      : [],
+                                  'op': 'add'
+                                },
+                              );
+                              if (result == true) {
+                                contextCubit
+                                    .read<ContactsCubit>()
+                                    .getMyAllocatedContacts(id);
+                              }
+                            },
+                          )),
                       bottomNavigationBar: DynamicNavigationBar(
                         currentIndex: _currentPageIndex,
                         onTap: _changeView,
@@ -226,9 +267,9 @@ class MainMenuState extends State<MainMenuPage> {
             ),
             ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                    elevation: 5,
-                    backgroundColor: Colors.transparent,
-                    shadowColor: Colors.transparent,
+                    elevation: ColorPalette.elevationScaleS,
+                    backgroundColor: Colors.lightBlueAccent,
+                    shadowColor: Colors.cyanAccent,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30),
                     ),
@@ -239,8 +280,10 @@ class MainMenuState extends State<MainMenuPage> {
                   context.read<ContactsCubit>().getMyAllocatedContacts(id);
                 },
                 child: const Text('Reintentar',
-                    style:
-                        TextStyle(fontSize: 18, fontWeight: FontWeight.bold)))
+                    style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white)))
           ],
         ),
       );
@@ -266,6 +309,29 @@ class MainMenuState extends State<MainMenuPage> {
                     }
                     return ContactTile(
                       securityContacts: filteredContacts[index],
+                      deleteFunction: () {
+                        context
+                            .read<ContactsCubit>()
+                            .deleteContact(filteredContacts, index, id);
+                        Navigator.of(context).pop();
+                      },
+                      updateFunction: () async {
+                        final result = await Navigator.of(context).pushNamed(
+                          '/main/contacts-wallet/new-contact',
+                          arguments: {
+                            'id': id,
+                            'contacts': filteredContacts,
+                            'op': 'update',
+                            'index': index
+                          },
+                        );
+                        if (result == true) {
+                          context
+                              .read<ContactsCubit>()
+                              .getMyAllocatedContacts(id);
+                        }
+                        Navigator.pop(context);
+                      },
                     );
                   })),
         ),
@@ -304,9 +370,9 @@ class MainMenuState extends State<MainMenuPage> {
             ),
             ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                    elevation: 5,
-                    backgroundColor: Colors.transparent,
-                    shadowColor: Colors.transparent,
+                    elevation: ColorPalette.elevationScaleS,
+                    backgroundColor: Colors.lightBlueAccent,
+                    shadowColor: Colors.cyanAccent,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30),
                     ),
@@ -317,14 +383,23 @@ class MainMenuState extends State<MainMenuPage> {
                   context.read<ContactsCubit>().getMyAllocatedContacts(id);
                 },
                 child: const Text('Reintentar',
-                    style:
-                        TextStyle(fontSize: 18, fontWeight: FontWeight.bold)))
+                    style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white)))
           ],
         ),
       );
     } else {
       return Container();
     }
+  }
+
+  bool _checkState(ContactsState state) {
+    if (state is ContactsStateLoaded || state is ContactsStateLoadedButEmpty) {
+      return true;
+    }
+    return false;
   }
 
   String _errorContactMessage(ContactsState state) {
@@ -480,9 +555,9 @@ class MainMenuState extends State<MainMenuPage> {
             ),
             ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                    elevation: 5,
-                    backgroundColor: Colors.transparent,
-                    shadowColor: Colors.transparent,
+                    elevation: ColorPalette.elevationScaleS,
+                    backgroundColor: Colors.lightBlueAccent,
+                    shadowColor: Colors.cyanAccent,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30),
                     ),
@@ -493,8 +568,10 @@ class MainMenuState extends State<MainMenuPage> {
                   context.read<ProfileCubit>().getProfile(id);
                 },
                 child: const Text('Reintentar',
-                    style:
-                        TextStyle(fontSize: 18, fontWeight: FontWeight.bold)))
+                    style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white)))
           ],
         ),
       );
@@ -519,11 +596,11 @@ class MainMenuState extends State<MainMenuPage> {
     if (state is BudgetStateInitial || state is BudgetStateLoading) {
       return const HeaderBudgetMetrics(
         body: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [CustomCircularProgressBar()],
-          ),
-        );
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [CustomCircularProgressBar()],
+        ),
+      );
     } else if (state is BudgetStateLoadedButEmpty) {
       return HeaderBudgetMetrics(
         assigned: state.wallet.assigned,
@@ -540,9 +617,9 @@ class MainMenuState extends State<MainMenuPage> {
             ShaderMask(
               blendMode: BlendMode.srcIn,
               shaderCallback: (Rect bounds) => LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: ColorPalette.alertGradient)
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: ColorPalette.alertGradient)
                   .createShader(bounds),
               child: const Icon(
                 Icons.error,
@@ -561,9 +638,9 @@ class MainMenuState extends State<MainMenuPage> {
             ),
             ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                    elevation: 5,
-                    backgroundColor: Colors.transparent,
-                    shadowColor: Colors.transparent,
+                    elevation: ColorPalette.elevationScaleS,
+                    backgroundColor: Colors.lightBlueAccent,
+                    shadowColor: Colors.cyanAccent,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30),
                     ),
@@ -574,8 +651,10 @@ class MainMenuState extends State<MainMenuPage> {
                   context.read<BudgetCubit>().getWalletAndHistory(id);
                 },
                 child: const Text('Reintentar',
-                    style:
-                    TextStyle(fontSize: 18, fontWeight: FontWeight.bold)))
+                    style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white)))
           ],
         ),
       );
@@ -607,7 +686,9 @@ class MainMenuState extends State<MainMenuPage> {
                   })),
         ),
       );
-    } else if (state is BudgetStateTimeout || state is BudgetStateError || state is BudgetStateCatchError) {
+    } else if (state is BudgetStateTimeout ||
+        state is BudgetStateError ||
+        state is BudgetStateCatchError) {
       return HeaderBudgetMetrics(
         lastUpdate: undefinedCard,
         body: Column(
@@ -621,9 +702,9 @@ class MainMenuState extends State<MainMenuPage> {
             ShaderMask(
               blendMode: BlendMode.srcIn,
               shaderCallback: (Rect bounds) => LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: ColorPalette.alertGradient)
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: ColorPalette.alertGradient)
                   .createShader(bounds),
               child: const Icon(
                 Icons.error,
@@ -642,9 +723,9 @@ class MainMenuState extends State<MainMenuPage> {
             ),
             ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                    elevation: 5,
-                    backgroundColor: Colors.transparent,
-                    shadowColor: Colors.transparent,
+                    elevation: ColorPalette.elevationScaleS,
+                    backgroundColor: Colors.lightBlueAccent,
+                    shadowColor: Colors.cyanAccent,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30),
                     ),
@@ -655,8 +736,10 @@ class MainMenuState extends State<MainMenuPage> {
                   context.read<BudgetCubit>().getWalletAndHistory(id);
                 },
                 child: const Text('Reintentar',
-                    style:
-                    TextStyle(fontSize: 18, fontWeight: FontWeight.bold)))
+                    style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white)))
           ],
         ),
       );

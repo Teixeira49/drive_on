@@ -77,8 +77,8 @@ class MyLoginPageState extends State<LoginPage> {
                       //Replacement
                       '/main/contacts-wallet', arguments: {'userIndex': stateCubit.user.userType == typePersonal ? 0 : 1});
             } else if (stateCubit is LoginStateLoginFailed) {
-              Navigator.pop(contextCubit);
-              FloatingWarningSnackBar.show(contextCubit, stateCubit.sms);
+                Navigator.pop(contextCubit);
+                FloatingWarningSnackBar.show(contextCubit, stateCubit.sms);
             } else {
               Navigator.pop(contextCubit);
               FloatingWarningSnackBar.show(contextCubit, 'Error Desconocido');

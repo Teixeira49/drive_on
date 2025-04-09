@@ -6,8 +6,12 @@ import '../../data/entities/popup_menu.dart';
 class PopupMenu extends StatelessWidget {
   final int visibility;
   final int ref;
+  final VoidCallback refreshFunction;
 
-  const PopupMenu({super.key, required this.visibility, required this.ref});
+  const PopupMenu(
+      {super.key,
+      required this.visibility,
+      required this.ref, required this.refreshFunction,});
 
   @override
   Widget build(BuildContext context) {
@@ -104,7 +108,7 @@ class PopupMenu extends StatelessWidget {
         elevation: ColorPalette.elevationScaleS,
         onSelected: (value) {
           if (value == PopUpMenuItem.item1AddContact) {
-            print('a');
+            refreshFunction;
           } else if (value == PopUpMenuItem.item2AddBudget) {
           } else if (value == PopUpMenuItem.item3Config) {
           } else if (value == PopUpMenuItem.item4Logout) {
@@ -112,9 +116,10 @@ class PopupMenu extends StatelessWidget {
           }
         },
         itemBuilder: (contextCubit) => [
-          if (visibility == ref) ...mainItems, // Se puede hacer anidado
-          if (visibility < ref) ...budgetItems,
-          if (visibility > ref) ...profileItems,
+              //if (visibility == ref && visibility != 0) ...mainItems,
+              // Se puede hacer anidado
+              if (visibility < ref) ...budgetItems,
+              if (visibility > ref) ...profileItems,
               const PopupMenuItem(
                   value: PopUpMenuItem.item3Config,
                   child: Row(

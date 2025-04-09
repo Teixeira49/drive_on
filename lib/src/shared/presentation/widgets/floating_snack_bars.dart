@@ -1,14 +1,15 @@
+import 'package:drive_on/src/core/config/styles/static_colors.dart';
 import 'package:flutter/material.dart';
 
 class FloatingWarningSnackBar {
   static void show(BuildContext context, String message) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      elevation: 5,
+      elevation: ColorPalette.elevationScaleS,
         content: Row(
       children: [
         Icon(
           Icons.warning_amber,
-          color: Theme.of(context).colorScheme.secondary,
+          color: ColorPalette.warning,
         ),
         Expanded(child: Text(
           message,
@@ -26,7 +27,7 @@ class FloatingSnackBar {
   static void show(BuildContext context, String message,
       [IconData? iconData, Color? color]) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      elevation: 5,
+        elevation: ColorPalette.elevationScaleS,
         content: Row(
       mainAxisAlignment: iconData != null
           ? MainAxisAlignment.spaceBetween
